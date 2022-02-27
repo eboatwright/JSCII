@@ -66,6 +66,10 @@ class Vector2 {
 		this.x = value.x;
 		this.y = value.y;
 	}
+
+	distanceBetween(other) {
+		return this.minus(other).magnitude();
+	}
 }
 
 const VZERO = new Vector2(0, 0);

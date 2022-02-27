@@ -356,6 +356,10 @@ class Vector2 {
 		this.x = value.x;
 		this.y = value.y;
 	}
+
+	distanceBetween(other) {
+		return this.minus(other).magnitude();
+	}
 }
 
 const VZERO = new Vector2(0, 0);
@@ -372,6 +376,7 @@ const VRIGHT = new Vector2(1, 0);
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 var lastFrame = new Date().getTime();
+var initialized = false;
 
 window.onresize = function() {
 	canvas.width = SCREEN_WIDTH * SCREEN_SCALE;
@@ -386,6 +391,11 @@ function update(deltaTime) {}
 function render() {}
 
 function backendUpdate(deltaTime) {
+	if(!initialized
+	&& init()) {
+		initialized = true;
+	}
+
 	update(deltaTime);
 	updateKeys();
 }
@@ -406,6 +416,5 @@ function backendTick() {
 	window.requestAnimationFrame(backendTick);
 }
 
-init();
 window.requestAnimationFrame(backendTick);
 
