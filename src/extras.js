@@ -4,8 +4,14 @@
 class Entity {
 	constructor(position = vZero()) {
 		this.position = position;
+		this.destroyed = false;
 	}
 
+	destroy() {
+		this.destroyed = true;
+	}
+
+	init() {}
 	update() {}
 	render() {}
 }
@@ -15,12 +21,16 @@ class Component {
 		this.entity = entity
 	}
 
+	init() {
+		throw new Error("Cannot init an empty Component!");
+	}
+
 	update() {
-		throw new Error("Cannot spawn an empty Component!");
+		throw new Error("Cannot update an empty Component!");
 	}
 
 	render() {
-		throw new Error("Cannot spawn an empty Component!");
+		throw new Error("Cannot render an empty Component!");
 	}
 }
 
@@ -38,32 +48,51 @@ class RenderChar extends Component {
 }
 
 // extras/action.js
-// TODO
-
 class Action {
 	constructor(entity) {
 		this.entity = entity;
+		this.performed = false;
 	}
 
-	perform() {}
+	perform() {
+		throw new Error("Cannot call perform on 'Action'")
+	}
+}
+
+class NoAction extends Action {
+	constructor() {
+		super(null);
+	}
+
+	perform() {
+		if(this.performed)
+			throw new Error("Cannot call same Action object twice");
+		this.performed = true;
+	}
 }
 
 class MoveAction extends Action {
-	constructor(entity, direction) {
+	constructor(entity, level, direction = vZero()) {
 		super(entity);
+		this.level = level;
 		this.direction = direction;
 	}
 
 	perform() {
-		this.entity.position += direction;
-		if(this.entity.collides())
-			this.entity.position -= direction;
+		if(this.performed)
+			throw new Error("Cannot call same Action object twice");
+		this.entity.position.add(this.direction);
+
+		if(this.level.tilemap.getTile(this.entity.position.x, this.entity.position.y).tags.includes("solid"))
+			this.entity.position.subtract(this.direction);
+
+		this.performed = true;
 	}
 }
 
 // extras/tilemap.js
 class Tile {
-	constructor(glyph, fgColor = WHITE, bgColor = BLACK, tags = []) {
+	constructor(glyph = QUESTION, fgColor = WHITE, bgColor = BLACK, tags = []) {
 		this.glyph = glyph;
 		this.fgColor = fgColor;
 		this.bgColor = bgColor;
@@ -72,7 +101,7 @@ class Tile {
 }
 
 class Tilemap extends Entity {
-	constructor(tileset, tiles, tileSize) {
+	constructor(tileset = [], tiles = [], tileSize = 8) {
 		super();
 		this.tileset = tileset;
 		this.tiles = tiles;
@@ -80,21 +109,70 @@ class Tilemap extends Entity {
 	}
 
 	getTile(x, y) {
-		return this.tileset[this.tiles[y][x] - 1];
+		return this.tileset[this.tiles[y][x]];
+	}
+
+	init() {
+	}
+
+	update() {
 	}
 
 	render() {
 		for(var y = 0; y < this.tiles.length; y++)
 			for(var x = 0; x < this.tiles[y].length; x++)
-				if(this.tiles[y][x] > 0)
-					FONT.renderChar(this.getTile(x, y).glyph, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+				FONT.renderChar(this.getTile(x, y).glyph, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+	}
+
+	onDestroy() {
+	}
+}
+
+// extras/level.js
+class Level {
+	constructor(tilemap = new Tilemap()) {
+		this.tilemap = tilemap;
+		this.entities = [];
+		this.entities.push(tilemap);
+	}
+
+	addEntity(entity) {
+		this.entities.push(entity);
+	}
+
+	init() {
+		for(var entity of this.entities)
+			entity.init();
+	}
+
+	update() {
+		for(var entity of this.entities)
+			entity.update();
+
+		this.entities = this.entities.filter(function(value, index, array) {
+			if(value.destroyed)
+				value.onDestroy();
+			return !value.destroyed;
+		});
+	}
+
+	render() {
+		for(var entity of this.entities)
+			entity.render();
 	}
 }
 
 // extras/camera.js
 class Camera extends Entity {
-	constructor(position = vZero()) {
+	constructor(position = vZero(), target = null) {
 		super(position);
+		if(target !== null)
+			this.target = target;
+	}
+
+	update() {
+		if(target !== null)
+			this.position = this.target.position;
 	}
 
 	top() { return this.position.y; }

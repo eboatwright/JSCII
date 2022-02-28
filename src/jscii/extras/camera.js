@@ -1,6 +1,13 @@
 class Camera extends Entity {
-	constructor(position = vZero()) {
+	constructor(position = vZero(), target = null) {
 		super(position);
+		if(target !== null)
+			this.target = target;
+	}
+
+	update() {
+		if(target !== null)
+			this.position = this.target.position;
 	}
 
 	top() { return this.position.y; }

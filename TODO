@@ -25,14 +25,6 @@ Extras todo list:
 	- world generation
 	- action system
 	- spell system
-	- camera system
-	- entity system
-		- creating / destroying entities at runtime
-		- life cycle
-			- init
-			- update
-			- render
-			- on destroyed
 
 Maybe list:
 	- 

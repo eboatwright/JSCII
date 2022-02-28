@@ -3,8 +3,14 @@
 class Entity {
 	constructor(position = vZero()) {
 		this.position = position;
+		this.destroyed = false;
 	}
 
+	destroy() {
+		this.destroyed = true;
+	}
+
+	init() {}
 	update() {}
 	render() {}
 }
@@ -14,12 +20,16 @@ class Component {
 		this.entity = entity
 	}
 
+	init() {
+		throw new Error("Cannot init an empty Component!");
+	}
+
 	update() {
-		throw new Error("Cannot spawn an empty Component!");
+		throw new Error("Cannot update an empty Component!");
 	}
 
 	render() {
-		throw new Error("Cannot spawn an empty Component!");
+		throw new Error("Cannot render an empty Component!");
 	}
 }
 

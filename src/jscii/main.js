@@ -1,5 +1,5 @@
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 var lastFrame = new Date().getTime();
 var deltaTime = 0;
 var initialized = false;
@@ -11,6 +11,10 @@ window.onresize = function() {
 	context.scale(SCREEN_SCALE, SCREEN_SCALE);
 }
 window.onresize();
+
+canvas.onclick = canvas.ontouchstart = () => {
+    canvas.requestFullscreen();
+};
 
 function init() {}
 function update() {}
@@ -24,6 +28,7 @@ function backendUpdate() {
 
 	update();
 	updateKeys();
+	CAMERA.update();
 }
 
 function backendRender() {

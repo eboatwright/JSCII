@@ -12,4 +12,7 @@ body, html {
 	background-color: #000000;
 	margin: auto;
 	display: block;
+	image-rendering: pixelated;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: crisp-edges;
 }
