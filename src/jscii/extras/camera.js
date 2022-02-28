@@ -6,7 +6,8 @@ class Camera extends Entity {
 	}
 
 	update() {
-		if(target !== null)
+		if(this.target !== null
+		&& this.target !== undefined)
 			this.position = this.target.position;
 	}
 
