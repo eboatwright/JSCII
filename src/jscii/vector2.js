@@ -10,7 +10,7 @@ class Vector2 {
 	}
 
 	plus(other) {
-		return new Vector2(this.x + other.x, this.y + other.y);
+		return vector2(this.x + other.x, this.y + other.y);
 	}
 
 	subtract(other) {
@@ -19,7 +19,7 @@ class Vector2 {
 	}
 
 	minus(other) {
-		return new Vector2(this.x - other.x, this.y - other.y);
+		return vector2(this.x - other.x, this.y - other.y);
 	}
 
 	multiply(other) {
@@ -37,7 +37,7 @@ class Vector2 {
 	}
 
 	dividedBy(other) {
-		return new Vector2(this.x / other.x, this.y / other.y);
+		return vector2(this.x / other.x, this.y / other.y);
 	}
 
 	magnitude() {
@@ -58,7 +58,7 @@ class Vector2 {
 	}
 
 	lerp(to, smoothing) {
-		return new Vector2(lerp(this.x, to.x, smoothing), lerp(this.y, to.y, smoothing));
+		return vector2(lerp(this.x, to.x, smoothing), lerp(this.y, to.y, smoothing));
 	}
 
 	lerpTo(to, smoothing) {
@@ -72,9 +72,13 @@ class Vector2 {
 	}
 }
 
-const VZERO = new Vector2(0, 0);
-const VONE = new Vector2(1, 1);
-const VUP = new Vector2(0, -1);
-const VDOWN = new Vector2(0, 1);
-const VLEFT = new Vector2(-1, 0);
-const VRIGHT = new Vector2(1, 0);
+function vector2(x, y) {
+	return new Vector2(x, y);
+}
+
+function vZero() { return vector2(0, 0); }
+function vOne() { return vector2(1, 1); }
+function vUp() { return vector2(0, -1); }
+function vDown() { return vector2(0, 1); }
+function vLeft() { return vector2(-1, 0); }
+function vRight() { return vector2(1, 0); }

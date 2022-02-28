@@ -1,5 +1,5 @@
 class Camera extends Entity {
-	constructor(position = VZERO) {
+	constructor(position = vZero()) {
 		super(position);
 	}
 

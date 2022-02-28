@@ -1,6 +1,7 @@
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 var lastFrame = new Date().getTime();
+var deltaTime = 0;
 var initialized = false;
 
 window.onresize = function() {
@@ -12,16 +13,16 @@ window.onresize = function() {
 window.onresize();
 
 function init() {}
-function update(deltaTime) {}
+function update() {}
 function render() {}
 
-function backendUpdate(deltaTime) {
+function backendUpdate() {
 	if(!initialized
 	&& init()) {
 		initialized = true;
 	}
 
-	update(deltaTime);
+	update();
 	updateKeys();
 }
 
@@ -31,9 +32,9 @@ function backendRender() {
 }
 
 function backendTick() {
-	const deltaTime = (new Date().getTime() - lastFrame) / 60;
+	deltaTime = (new Date().getTime() - lastFrame) / 60;
 
-	backendUpdate(deltaTime);
+	backendUpdate();
 	backendRender();
 
 	lastFrame = new Date().getTime();
