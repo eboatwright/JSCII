@@ -1,4 +1,6 @@
 // constants.js
+const TILE_SIZE = 8;
+
 const SCREEN_WIDTH = 480;
 const SCREEN_HEIGHT = 300;
 const SCREEN_SCALE = 2;
@@ -203,6 +205,10 @@ function randomRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+function tileInScreen() {
+	// TODO
+}
+
 // font.js
 function toCharIndex(char) {
 	switch(char) {
@@ -276,16 +282,16 @@ class Font {
 		this.image = loadImage("res/commodore64_petscii.png");
 	}
 
-	renderChar(char, x, y, fgColor, bgColor, inverted) {
+	renderChar(char, x, y, fgColor, bgColor) {
 		context.fillStyle = bgColor;
-		context.fillRect(x * 8, y * 8, 8, 8);
-		context.drawImage(this.image, toCharIndex(char) * 9, COLORS.indexOf(fgColor) * 9, 8, 8, x * 8, y * 8, 8, 8);
+		context.fillRect(x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE);
+		context.drawImage(this.image, toCharIndex(char) * (TILE_SIZE + 1), COLORS.indexOf(fgColor) * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE, x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), 8, 8);
 	}
 
-	renderText(text, x, y, fgColor, bgColor, inverted) {
+	renderText(text, x, y, fgColor, bgColor) {
 		text = text.toUpperCase();
 		for(var i = 0; i < text.length; i++)
-			this.renderChar(text[i], x + i, y, fgColor, bgColor, inverted);
+			this.renderChar(text[i], x + i, y, fgColor, bgColor);
 	}
 }
 

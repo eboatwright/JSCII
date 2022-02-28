@@ -1,3 +1,5 @@
+const TILE_SIZE = 8;
+
 const SCREEN_WIDTH = 480;
 const SCREEN_HEIGHT = 300;
 const SCREEN_SCALE = 2;
