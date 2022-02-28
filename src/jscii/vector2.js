@@ -46,9 +46,9 @@ class Vector2 {
 
 	normalized() {
 		var magnitude = this.magnitude();
-		if(magnitude > 0) {
+		if(magnitude > 0)
 			return this.dividedBy(magnitude);
-		}
+		return VZERO;
 	}
 
 	normalize() {

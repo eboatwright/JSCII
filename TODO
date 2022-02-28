@@ -1,0 +1,37 @@
+#######  #####  ######   ##### 
+   #    #     # #     # #     #
+   #    #     # #     # #     #
+   #    #     # #     # #     #
+   #     #####  ######   ##### 
+
+The main todo list, is for things that will be in the main jscii.js file.
+So, things that you probably* don't want to write yourself.
+
+The extras todo list, is for things that you probably will want to write yourself.
+So, things like spell systems you will probably want to write yourself, to fit your own game.
+
+The maybe list, is just things that I might've had suggestions for, or thought of myself,
+that I might not want to add.
+
+
+
+Main todo list:
+	- animation system
+	- ui system
+
+Extras todo list:
+	- random name generation
+	- lighting / fog
+	- world generation
+	- action system
+	- spell system
+	- entity system
+		- creating / destroying entities at runtime
+		- life cycle
+			- init
+			- update
+			- render
+			- on destroyed
+
+Maybe list:
+	- 

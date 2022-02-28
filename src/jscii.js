@@ -199,6 +199,10 @@ function lerp(start, end, smoothing) {
 	return (1 - smoothing) * start + smoothing * end;
 }
 
+function randomRange(min, max) {
+	return Math.random() * (max - min) + min;
+}
+
 // font.js
 function toCharIndex(char) {
 	switch(char) {
@@ -336,9 +340,9 @@ class Vector2 {
 
 	normalized() {
 		var magnitude = this.magnitude();
-		if(magnitude > 0) {
+		if(magnitude > 0)
 			return this.dividedBy(magnitude);
-		}
+		return VZERO;
 	}
 
 	normalize() {
@@ -368,9 +372,6 @@ const VUP = new Vector2(0, -1);
 const VDOWN = new Vector2(0, 1);
 const VLEFT = new Vector2(-1, 0);
 const VRIGHT = new Vector2(1, 0);
-
-// PECS.js
-
 
 // main.js
 var canvas = document.getElementById("canvas");

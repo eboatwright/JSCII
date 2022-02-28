@@ -9,6 +9,12 @@ def main
 		end
 	}
 	write_file "./main.js", main_file
+
+	extras_file = File.open "../extras.js", "w+"
+	extras_files = Dir.glob "./extras/*.js"
+	extras_files.each { |file_path|
+		write_file file_path, extras_file
+	}
 end
 
 def write_file(file_path, main_file)
