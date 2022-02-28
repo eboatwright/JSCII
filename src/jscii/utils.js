@@ -15,7 +15,3 @@ function lerp(start, end, smoothing) {
 function randomRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
-
-function tileInScreen() {
-	// TODO
-}

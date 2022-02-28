@@ -71,6 +71,8 @@ class Font {
 	}
 
 	renderChar(char, x, y, fgColor, bgColor) {
+		if(!CAMERA.tileInView(x, y))
+			return;
 		context.fillStyle = bgColor;
 		context.fillRect(x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE);
 		context.drawImage(this.image, toCharIndex(char) * (TILE_SIZE + 1), COLORS.indexOf(fgColor) * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE, x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), 8, 8);

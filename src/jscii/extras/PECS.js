@@ -3,25 +3,16 @@
 class Entity {
 	constructor(position = VZERO) {
 		this.position = position;
-		this.components = [];
 	}
 
-	add(component) {
-		this.components.push(component);
-		return this;
-	}
-
-	update() {
-	}
-
-	render() {
-	}
+	update() {}
+	render() {}
 }
 
-class Renderer {
-	constructor() {
+class RenderGlyph {
+	constructor(glyph = QUESTION, fgColor = WHITE, bgColor = BLACK) {
+		this.glyph = glyph;
+		this.fgColor = fgColor;
+		this.bgColor = bgColor;
 	}
 }
-
-var player = new Entity()
-		.add(new Renderer());
