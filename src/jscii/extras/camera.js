@@ -1,6 +1,6 @@
 class Camera extends Entity {
-	constructor(position = vZero(), target = null) {
-		super(position);
+	constructor(id = "camera", position = vZero(), tags = ["camera"], target = null) {
+		super(id, position, tags);
 		if(target !== null)
 			this.target = target;
 	}

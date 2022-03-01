@@ -10,6 +10,28 @@ class Level {
 		this.entities.push(entity);
 	}
 
+	getEntityById(id) {
+		for(const entity of this.entities)
+			if(entity.id == id)
+				return entity;
+		throw new Error("There is no Entity with the id: " + tag);
+	}
+
+	getEntityByTag(tag) {
+		for(const entity of this.entities)
+			if(entity.tags.includes(tag))
+				return entity;
+		throw new Error("There is no Entity with the tag: " + tag);
+	}
+
+	getEntitiesByTag(tag) {
+		var entities = [];
+		for(const entity of this.entities)
+			if(entity.tags.includes(tag))
+				entities.push(entity);
+		return entities;
+	}
+
 	init() {
 		this.tilemap.init();
 		for(var entity of this.entities)

@@ -1,9 +1,21 @@
 // PECS stands for Pseudo-ECS :)
 
 class Entity {
-	constructor(position = vZero()) {
+	constructor(id = "", position = vZero(), tags = []) {
+		this.id = id;
 		this.position = position;
+		this.tags = tags;
 		this.destroyed = false;
+	}
+
+	addTag(tag) {
+		tags.push(tag);
+	}
+
+	removeTag(tag) {
+		this.tags = this.tags.filter(function(value, index, array) {
+			return !value == tag;
+		});
 	}
 
 	destroy() {

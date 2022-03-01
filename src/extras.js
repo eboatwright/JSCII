@@ -2,9 +2,21 @@
 // PECS stands for Pseudo-ECS :)
 
 class Entity {
-	constructor(position = vZero()) {
+	constructor(id = "", position = vZero(), tags = []) {
+		this.id = id;
 		this.position = position;
+		this.tags = tags;
 		this.destroyed = false;
+	}
+
+	addTag(tag) {
+		tags.push(tag);
+	}
+
+	removeTag(tag) {
+		this.tags = this.tags.filter(function(value, index, array) {
+			return !value == tag;
+		});
 	}
 
 	destroy() {
@@ -143,6 +155,28 @@ class Level {
 		this.entities.push(entity);
 	}
 
+	getEntityById(id) {
+		for(const entity of this.entities)
+			if(entity.id == id)
+				return entity;
+		throw new Error("There is no Entity with the id: " + tag);
+	}
+
+	getEntityByTag(tag) {
+		for(const entity of this.entities)
+			if(entity.tags.includes(tag))
+				return entity;
+		throw new Error("There is no Entity with the tag: " + tag);
+	}
+
+	getEntitiesByTag(tag) {
+		var entities = [];
+		for(const entity of this.entities)
+			if(entity.tags.includes(tag))
+				entities.push(entity);
+		return entities;
+	}
+
 	init() {
 		this.tilemap.init();
 		for(var entity of this.entities)
@@ -235,8 +269,8 @@ class Tile {
 }
 
 class Map extends Entity {
-	constructor(tiles = [], tileSize = 8) {
-		super();
+	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
+		super(id, position, tags);
 		this.tiles = tiles;
 		this.tileSize = tileSize;
 	}
@@ -251,7 +285,8 @@ class Map extends Entity {
 }
 
 class Tilemap extends Map {
-	constructor(tileset = [], tiles = [], tileSize = 8) {
+	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
+		super(id, tiles, tileSize, tags, position);
 		super(tiles, tileSize);
 		this.tileset = tileset;
 	}
@@ -268,12 +303,17 @@ class Tilemap extends Map {
 }
 
 class Lightmap extends Map {
-	constructor(tiles = [], tileSize = 8) {
-		super(tiles, tileSize);
+	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
+		super(id, tiles, tileSize, tags, position);
 	}
 
 	getTile(x, y) {
 		return this.tiles[y][x];
+	}
+
+	// TODO
+	update(level) {
+		const player = level.getEntityByTag("player");
 	}
 
 	render() {
@@ -286,8 +326,8 @@ class Lightmap extends Map {
 
 // extras/camera.js
 class Camera extends Entity {
-	constructor(position = vZero(), target = null) {
-		super(position);
+	constructor(id = "camera", position = vZero(), tags = ["camera"], target = null) {
+		super(id, position, tags);
 		if(target !== null)
 			this.target = target;
 	}

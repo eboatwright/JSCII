@@ -8,8 +8,8 @@ class Tile {
 }
 
 class Map extends Entity {
-	constructor(tiles = [], tileSize = 8) {
-		super();
+	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
+		super(id, position, tags);
 		this.tiles = tiles;
 		this.tileSize = tileSize;
 	}
@@ -24,7 +24,8 @@ class Map extends Entity {
 }
 
 class Tilemap extends Map {
-	constructor(tileset = [], tiles = [], tileSize = 8) {
+	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
+		super(id, tiles, tileSize, tags, position);
 		super(tiles, tileSize);
 		this.tileset = tileset;
 	}
@@ -41,12 +42,17 @@ class Tilemap extends Map {
 }
 
 class Lightmap extends Map {
-	constructor(tiles = [], tileSize = 8) {
-		super(tiles, tileSize);
+	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
+		super(id, tiles, tileSize, tags, position);
 	}
 
 	getTile(x, y) {
 		return this.tiles[y][x];
+	}
+
+	// TODO
+	update(level) {
+		const player = level.getEntityByTag("player");
 	}
 
 	render() {
