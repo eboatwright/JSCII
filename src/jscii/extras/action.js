@@ -5,7 +5,7 @@ class Action {
 	}
 
 	perform() {
-		throw new Error("Cannot call perform on 'Action'")
+		throw new Error("Cannot call perform on 'Action' You must extend this class")
 	}
 }
 

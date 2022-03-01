@@ -22,23 +22,34 @@ class Component {
 	}
 
 	init() {
-		throw new Error("Cannot init an empty Component!");
+		throw new Error("Cannot init an empty Component! You must extend this class");
 	}
 
 	update() {
-		throw new Error("Cannot update an empty Component!");
+		throw new Error("Cannot update an empty Component! You must extend this class");
 	}
 
 	render() {
-		throw new Error("Cannot render an empty Component!");
+		throw new Error("Cannot render an empty Component! You must extend this class");
 	}
 }
 
-class CharRenderer extends Component {
-	constructor(entity, char = QUESTION, fgColor = WHITE, bgColor = BLACK) {
+class Renderer extends Component {
+	constructor(entity, layer = "default", fgColor = WHITE) {
 		super(entity);
-		this.char = char;
+		this.layer = layer;
 		this.fgColor = fgColor;
+	}
+
+	render() {
+		throw new Error("Cannot render an empty renderer! You must extend this class");
+	}
+}
+
+class CharRenderer extends Renderer {
+	constructor(entity, layer = "default", char = QUESTION, fgColor = WHITE, bgColor = BLACK) {
+		super(entity, layer, fgColor);
+		this.char = char;
 		this.bgColor = bgColor;
 	}
 
@@ -55,7 +66,7 @@ class Action {
 	}
 
 	perform() {
-		throw new Error("Cannot call perform on 'Action'")
+		throw new Error("Cannot call perform on 'Action' You must extend this class")
 	}
 }
 
@@ -95,7 +106,7 @@ class NameGenerator {
 	constructor() {}
 
 	generate() {
-		throw new Error("cannot generate with empty NameGenerator");
+		throw new Error("cannot generate with empty NameGenerator You must extend this class");
 	}
 }
 
@@ -119,47 +130,13 @@ class PersonNameGenerator extends NameGenerator {
 	}
 }
 
-// extras/tilemap.js
-class Tile {
-	constructor(glyph = QUESTION, fgColor = WHITE, bgColor = BLACK, tags = []) {
-		this.glyph = glyph;
-		this.fgColor = fgColor;
-		this.bgColor = bgColor;
-		this.tags = tags;
-	}
-}
-
-class Tilemap extends Entity {
-	constructor(tileset = [], tiles = [], tileSize = 8) {
-		super();
-		this.tileset = tileset;
-		this.tiles = tiles;
-		this.tileSize = tileSize;
-	}
-
-	getTile(x, y) {
-		return this.tileset[this.tiles[y][x]];
-	}
-
-	init() {}
-
-	update() {}
-
-	render() {
-		for(var y = 0; y < this.tiles.length; y++)
-			for(var x = 0; x < this.tiles[y].length; x++)
-				FONT.renderChar(this.getTile(x, y).glyph, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
-	}
-
-	onDestroy() {}
-}
-
 // extras/level.js
 class Level {
-	constructor(tilemap = new Tilemap()) {
+	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = new Lightmap()) {
+		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
+		this.lightmap = lightmap;
 		this.entities = [];
-		this.entities.push(tilemap);
 	}
 
 	addEntity(entity) {
@@ -167,13 +144,17 @@ class Level {
 	}
 
 	init() {
+		this.tilemap.init();
 		for(var entity of this.entities)
 			entity.init();
+		this.lightmap.init();
 	}
 
 	update() {
+		this.tilemap.update();
 		for(var entity of this.entities)
 			entity.update();
+		this.lightmap.update();
 
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
@@ -183,8 +164,14 @@ class Level {
 	}
 
 	render() {
-		for(var entity of this.entities)
-			entity.render();
+		this.tilemap.render();
+		for(const renderLayer of this.renderOrder)
+			for(const entity of this.entities)
+				if(entity.renderer !== null
+				&& entity.renderer !== undefined
+				&& entity.renderer.layer == renderLayer)
+					entity.render();
+		this.lightmap.render();
 	}
 }
 
@@ -234,6 +221,66 @@ class Animator extends Component {
 
 	getFrame() {
 		return this.animations[this.currentAnimation].frames[this.currentFrameIndex];
+	}
+}
+
+// extras/map.js
+class Tile {
+	constructor(glyph = QUESTION, fgColor = WHITE, bgColor = BLACK, tags = []) {
+		this.glyph = glyph;
+		this.fgColor = fgColor;
+		this.bgColor = bgColor;
+		this.tags = tags;
+	}
+}
+
+class Map extends Entity {
+	constructor(tiles = [], tileSize = 8) {
+		super();
+		this.tiles = tiles;
+		this.tileSize = tileSize;
+	}
+
+	getTile(x, y) {
+		throw new Error("cannot get tile from 'Map' You must extend this class");
+	}
+
+	render() {
+		throw new Error("cannot render 'Map' You must extend this class");
+	}
+}
+
+class Tilemap extends Map {
+	constructor(tileset = [], tiles = [], tileSize = 8) {
+		super(tiles, tileSize);
+		this.tileset = tileset;
+	}
+
+	getTile(x, y) {
+		return this.tileset[this.tiles[y][x]];
+	}
+
+	render() {
+		for(var y = 0; y < this.tiles.length; y++)
+			for(var x = 0; x < this.tiles[y].length; x++)
+				FONT.renderChar(this.getTile(x, y).glyph, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+	}
+}
+
+class Lightmap extends Map {
+	constructor(tiles = [], tileSize = 8) {
+		super(tiles, tileSize);
+	}
+
+	getTile(x, y) {
+		return this.tiles[y][x];
+	}
+
+	render() {
+		for(var y = 0; y < this.tiles.length; y++)
+			for(var x = 0; x < this.tiles[y].length; x++)
+				if(this.tiles[y][x] == 1)
+					FONT.renderChar(SPACE, x, y, BLACK, BLACK);
 	}
 }
 

@@ -3,8 +3,7 @@ var level;
 class Player extends Entity {
 	constructor(position = vZero()) {
 		super(position);
-		this.renderer = new CharRenderer(this, AT, LIGHT_BROWN, DARK_GRAY);
-		this.animator = new Animator(this, [new Animation("default", [AT, A], 1)]);
+		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
 	}
 
 	init() {
@@ -23,9 +22,6 @@ class Player extends Entity {
 
 		if(direction.magnitude() > 0)
 			new MoveAction(this, level, direction).perform();
-
-		this.animator.update();
-		this.renderer.char = this.animator.getFrame();
 	}
 
 	render() {
@@ -38,6 +34,7 @@ class Player extends Entity {
 
 init = function() {
 	level = new Level(
+		["default"],
 		new Tilemap([
 				new Tile(SPACE, BLACK, BLACK, []),
 				new Tile(PERIOD, MID_GRAY, BLACK, []),
@@ -78,7 +75,8 @@ init = function() {
 				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			]
-		)
+		),
+		new Lightmap()
 	);
 
 	level.addEntity(

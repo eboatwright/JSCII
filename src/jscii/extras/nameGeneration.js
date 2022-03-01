@@ -2,7 +2,7 @@ class NameGenerator {
 	constructor() {}
 
 	generate() {
-		throw new Error("cannot generate with empty NameGenerator");
+		throw new Error("cannot generate with empty NameGenerator You must extend this class");
 	}
 }
 
