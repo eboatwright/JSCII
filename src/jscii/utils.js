@@ -16,7 +16,25 @@ function randomRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+function randomIndex(array) {
+	return Math.floor(randomRange(0, array.length));
+}
+
 function randomInArray(array) {
-	var index = Math.floor(randomRange(0, array.length));
-	return array[index];
+	return array[randomIndex(array)];
+}
+
+function init2DArray(width, height, value = 0) {
+	var result = [];
+	for(var y = 0; y < height; y++) {
+		var row = [];
+		for(var x = 0; x < width; x++)
+			row.push(value);
+		result.push(row);
+	}
+	return result;
+}
+
+function copyVar(variable) {
+	return Object.assign({}, variable);
 }

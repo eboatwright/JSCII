@@ -70,6 +70,24 @@ class Vector2 {
 	distanceBetween(other) {
 		return this.minus(other).magnitude();
 	}
+
+	round() {
+		this.x = Math.round(this.x);
+		this.y = Math.round(this.y);
+	}
+
+	rounded() {
+		return vector2(Math.round(this.x), Math.round(this.y));
+	}
+
+	floor() {
+		this.x = Math.floor(this.x);
+		this.y = Math.floor(this.y);
+	}
+
+	floored() {
+		return vector2(Math.floor(this.x), Math.floor(this.y));
+	}
 }
 
 function vector2(x, y) {

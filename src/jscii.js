@@ -205,9 +205,27 @@ function randomRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+function randomIndex(array) {
+	return Math.floor(randomRange(0, array.length));
+}
+
 function randomInArray(array) {
-	var index = Math.floor(randomRange(0, array.length));
-	return array[index];
+	return array[randomIndex(array)];
+}
+
+function init2DArray(width, height, value = 0) {
+	var result = [];
+	for(var y = 0; y < height; y++) {
+		var row = [];
+		for(var x = 0; x < width; x++)
+			row.push(value);
+		result.push(row);
+	}
+	return result;
+}
+
+function copyVar(variable) {
+	return Object.assign({}, variable);
 }
 
 // font.js
@@ -372,6 +390,24 @@ class Vector2 {
 
 	distanceBetween(other) {
 		return this.minus(other).magnitude();
+	}
+
+	round() {
+		this.x = Math.round(this.x);
+		this.y = Math.round(this.y);
+	}
+
+	rounded() {
+		return vector2(Math.round(this.x), Math.round(this.y));
+	}
+
+	floor() {
+		this.x = Math.floor(this.x);
+		this.y = Math.floor(this.y);
+	}
+
+	floored() {
+		return vector2(Math.floor(this.x), Math.floor(this.y));
 	}
 }
 

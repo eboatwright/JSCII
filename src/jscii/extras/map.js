@@ -1,6 +1,6 @@
 class Tile {
-	constructor(glyph = QUESTION, fgColor = WHITE, bgColor = BLACK, tags = []) {
-		this.glyph = glyph;
+	constructor(char = QUESTION, fgColor = WHITE, bgColor = BLACK, tags = []) {
+		this.char = char;
 		this.fgColor = fgColor;
 		this.bgColor = bgColor;
 		this.tags = tags;
@@ -36,7 +36,7 @@ class Tilemap extends Map {
 	render() {
 		for(var y = 0; y < this.tiles.length; y++)
 			for(var x = 0; x < this.tiles[y].length; x++)
-				FONT.renderChar(this.getTile(x, y).glyph, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+				FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
 	}
 }
 
