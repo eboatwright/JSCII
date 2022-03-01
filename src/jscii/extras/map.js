@@ -26,7 +26,6 @@ class Map extends Entity {
 class Tilemap extends Map {
 	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
-		super(tiles, tileSize);
 		this.tileset = tileset;
 	}
 

@@ -188,7 +188,7 @@ class Level {
 		this.tilemap.update();
 		for(var entity of this.entities)
 			entity.update();
-		this.lightmap.update();
+		this.lightmap.update(this);
 
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
@@ -287,7 +287,6 @@ class Map extends Entity {
 class Tilemap extends Map {
 	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
-		super(tiles, tileSize);
 		this.tileset = tileset;
 	}
 
