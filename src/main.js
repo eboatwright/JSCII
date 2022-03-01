@@ -2,11 +2,8 @@ var level;
 
 class Player extends Entity {
 	constructor(position = vZero()) {
-		super(position);
+		super("player", position, ["player"]);
 		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
-	}
-
-	init() {
 	}
 
 	update() {
@@ -27,20 +24,20 @@ class Player extends Entity {
 	render() {
 		this.renderer.render();
 	}
-
-	onDestroy() {
-	}
 }
 
 init = function() {
 	level = new Level(
 		["default"],
-		new Tilemap([
+		new Tilemap(
+			"tilemap",
+			[
 				new Tile(SPACE, BLACK, BLACK, []),
 				new Tile(PERIOD, MID_GRAY, BLACK, []),
 				new Tile(COMMA, MID_GRAY, BLACK, []),
 				new Tile(HASH, MID_GRAY, DARK_GRAY, ["solid"]),
-			], [
+			],
+			[
 				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 				[0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 				[0, 3, 0, 2, 2, 1, 1, 0, 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
