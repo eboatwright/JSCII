@@ -19,11 +19,9 @@ class Tilemap extends Entity {
 		return this.tileset[this.tiles[y][x]];
 	}
 
-	init() {
-	}
+	init() {}
 
-	update() {
-	}
+	update() {}
 
 	render() {
 		for(var y = 0; y < this.tiles.length; y++)
@@ -31,6 +29,5 @@ class Tilemap extends Entity {
 				FONT.renderChar(this.getTile(x, y).glyph, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
 	}
 
-	onDestroy() {
-	}
+	onDestroy() {}
 }

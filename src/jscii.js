@@ -412,7 +412,6 @@ function backendUpdate() {
 
 	update();
 	updateKeys();
-	CAMERA.update();
 }
 
 function backendRender() {

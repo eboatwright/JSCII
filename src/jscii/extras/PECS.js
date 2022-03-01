@@ -33,7 +33,7 @@ class Component {
 	}
 }
 
-class RenderChar extends Component {
+class CharRenderer extends Component {
 	constructor(entity, char = QUESTION, fgColor = WHITE, bgColor = BLACK) {
 		super(entity);
 		this.char = char;

@@ -3,7 +3,8 @@ var level;
 class Player extends Entity {
 	constructor(position = vZero()) {
 		super(position);
-		this.renderer = new RenderChar(this, AT, LIGHT_BROWN, DARK_GRAY);
+		this.renderer = new CharRenderer(this, AT, LIGHT_BROWN, DARK_GRAY);
+		this.animator = new Animator(this, [new Animation("default", [AT, A], 1)]);
 	}
 
 	init() {
@@ -22,6 +23,9 @@ class Player extends Entity {
 
 		if(direction.magnitude() > 0)
 			new MoveAction(this, level, direction).perform();
+
+		this.animator.update();
+		this.renderer.char = this.animator.getFrame();
 	}
 
 	render() {
