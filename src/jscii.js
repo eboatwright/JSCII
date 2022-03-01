@@ -205,6 +205,11 @@ function randomRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+function randomInArray(array) {
+	var index = Math.floor(randomRange(0, array.length));
+	return array[index];
+}
+
 // font.js
 function toCharIndex(char) {
 	switch(char) {
