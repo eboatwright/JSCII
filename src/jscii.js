@@ -167,6 +167,9 @@ window.addEventListener("keyup", function(event) {
 });
 
 function updateKeys() {
+	// Note: JavaScript is a little weird in it's memory management,
+	// 		So I have to do this 'Object.assign({})' thing to copy the array
+	//		instead of make a reference to it
 	keysLast = Object.assign({}, keys);
 }
 
@@ -489,6 +492,9 @@ function backendRender() {
 }
 
 function backendTick() {
+	// Note: this '/ 60' doesn't mean that JavaScript runs at 60 FPS.
+	// 		It actually runs at ~30 most of the time, so this doesn't mean that
+	//		deltaTime will equal 1
 	deltaTime = (new Date().getTime() - lastFrame) / 60;
 
 	backendUpdate();

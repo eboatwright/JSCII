@@ -40,9 +40,8 @@ class Player extends Entity {
 				new MoveAction(this, level, direction).perform();
 				level.lightmap.update(level);
 			}
-		} else {
+		} else
 			this.moveTimer = 0;
-		}
 	}
 
 	render() {

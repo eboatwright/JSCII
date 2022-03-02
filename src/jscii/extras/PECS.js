@@ -9,13 +9,18 @@ class Entity {
 	}
 
 	addTag(tag) {
-		tags.push(tag);
+		if(!this.hasTag(tag))
+			tags.push(tag);
 	}
 
 	removeTag(tag) {
 		this.tags = this.tags.filter(function(value, index, array) {
 			return !value == tag;
 		});
+	}
+
+	hasTag(tag) {
+		return this.tags.includes(tag);
 	}
 
 	destroy() {

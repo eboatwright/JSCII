@@ -10,6 +10,9 @@ window.addEventListener("keyup", function(event) {
 });
 
 function updateKeys() {
+	// Note: JavaScript is a little weird in it's memory management,
+	// 		So I have to do this 'Object.assign({})' thing to copy the array
+	//		instead of make a reference to it
 	keysLast = Object.assign({}, keys);
 }
 

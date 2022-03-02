@@ -36,6 +36,9 @@ function backendRender() {
 }
 
 function backendTick() {
+	// Note: this '/ 60' doesn't mean that JavaScript runs at 60 FPS.
+	// 		It actually runs at ~30 most of the time, so this doesn't mean that
+	//		deltaTime will equal 1
 	deltaTime = (new Date().getTime() - lastFrame) / 60;
 
 	backendUpdate();
