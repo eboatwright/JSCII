@@ -7,7 +7,7 @@ var tilemap = new Tilemap(
 		new Tile(SPACE, BLACK, BLACK, ["blank", "solid"]),
 		new Tile(PERIOD, MID_GRAY, BLACK, ["floor", "roomLighted"]),
 		new Tile(COMMA, MID_GRAY, BLACK, ["floor", "roomLighted"]),
-		new Tile(TOP_HORIZONTAL_LINE_3, MID_GRAY, DARK_GRAY, ["solid", "roomLighted"]),
+		new Tile(TOP_HORIZONTAL_LINE_3, MID_GRAY, DARK_GRAY, ["solid"]),
 		new Tile(HASH, MID_GRAY, DARK_GRAY, ["tunnel"]),
 	],
 	init2DArray(WIDTH_TILE, HEIGHT_TILE),
@@ -67,9 +67,7 @@ init = function() {
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
 
-	level.addEntity(
-		new Player(playerPosition)
-	);
+	level.addEntity(new Player(playerPosition));
 
 	level.init();
 

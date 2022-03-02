@@ -85,18 +85,15 @@ class Lightmap extends Map {
 
 			while(level.tilemap.getTile(player.position.x + x1, player.position.y).hasTag("roomLighted"))
 				x1 -= 1;
-
 			while(level.tilemap.getTile(player.position.x, player.position.y + y1).hasTag("roomLighted"))
 				y1 -= 1;
-
 			while(level.tilemap.getTile(player.position.x + x2, player.position.y).hasTag("roomLighted"))
 				x2 += 1;
-
 			while(level.tilemap.getTile(player.position.x, player.position.y + y2).hasTag("roomLighted"))
 				y2 += 1;
 
-			for(var y = y1; y < y2; y++)
-				for(var x = x1; x < x2; x++)
+			for(var y = y1; y <= y2; y++)
+				for(var x = x1; x <= x2; x++)
 					this.tiles[player.position.y + y][player.position.x + x] = 0;
 		}
 	}

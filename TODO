@@ -17,7 +17,7 @@ that I might not want to add.
 
 
 Bugs list:
-	- there is a lighting bug where if it finds a tunnel, it thinks that it's a wall and doesn't finish the lighting
+	- 
 
 Main todo list:
 	- ui system
