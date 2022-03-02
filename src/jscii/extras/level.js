@@ -1,5 +1,5 @@
 class Level {
-	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = new Lightmap()) {
+	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = undefined) {
 		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
 		this.lightmap = lightmap;
@@ -17,14 +17,14 @@ class Level {
 		throw new Error("There is no Entity with the id: " + tag);
 	}
 
-	getEntityByTag(tag) {
+	getEntityWithTag(tag) {
 		for(const entity of this.entities)
 			if(entity.tags.includes(tag))
 				return entity;
 		throw new Error("There is no Entity with the tag: " + tag);
 	}
 
-	getEntitiesByTag(tag) {
+	getEntitiesWithTag(tag) {
 		var entities = [];
 		for(const entity of this.entities)
 			if(entity.tags.includes(tag))
@@ -33,16 +33,17 @@ class Level {
 	}
 
 	init() {
-		this.tilemap.init();
+		this.tilemap.init(this);
 		for(var entity of this.entities)
-			entity.init();
-		this.lightmap.init();
+			entity.init(this);
+		if(this.lightmap !== undefined)
+			this.lightmap.init(this);
 	}
 
 	update() {
-		this.tilemap.update();
+		this.tilemap.update(this);
 		for(var entity of this.entities)
-			entity.update(level);
+			entity.update(this);
 
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
@@ -52,13 +53,14 @@ class Level {
 	}
 
 	render() {
-		this.tilemap.render();
+		this.tilemap.render(this);
 		for(const renderLayer of this.renderOrder)
 			for(const entity of this.entities)
 				if(entity.renderer !== null
 				&& entity.renderer !== undefined
 				&& entity.renderer.layer == renderLayer)
-					entity.render();
-		this.lightmap.render();
+					entity.render(this);
+		if(this.lightmap !== undefined)
+			this.lightmap.render(this);
 	}
 }

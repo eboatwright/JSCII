@@ -15,12 +15,8 @@ var tilemap = new Tilemap(
 const dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 750);
 var level;
 
-class Player extends Entity {
-	constructor(position = vZero()) {
-		super("player", position, ["player"]);
-		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
-		this.moveTimer = 0;
-	}
+class PlayerController extends Component {
+	constructor(entity) { super(entity); }
 
 	update(level) {
 		var direction = vector2(0, 0);
@@ -37,15 +33,28 @@ class Player extends Entity {
 			this.moveTimer -= deltaTime;
 			if(this.moveTimer <= 0) {
 				this.moveTimer = 1;
-				new MoveAction(this, level, direction).perform();
+				new MoveAction(this.entity, level, direction).perform();
 				level.lightmap.update(level);
 			}
 		} else
 			this.moveTimer = 0;
 	}
+}
 
-	render() {
-		this.renderer.render();
+class Player extends Entity {
+	constructor(position = vZero()) {
+		super("player", position, ["player"]);
+		this.playerController = new PlayerController(this);
+		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
+		this.moveTimer = 0;
+	}
+
+	update(level) {
+		this.playerController.update(level);
+	}
+
+	render(level) {
+		this.renderer.render(level);
 	}
 }
 
@@ -63,7 +72,6 @@ init = function() {
 	);
 
 	level.init();
-	level.lightmap.update(level);
 
 	return true;
 }

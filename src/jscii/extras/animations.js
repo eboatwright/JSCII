@@ -17,7 +17,7 @@ class Animator extends Component {
 		this.dontInterrupt = false;
 	}
 
-	update() {
+	update(level) {
 		this.timer -= deltaTime;
 		if(this.timer <= 0) {
 			this.timer = this.animations[this.currentAnimation].frameDuration;

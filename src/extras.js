@@ -28,9 +28,9 @@ class Entity {
 		this.destroyed = true;
 	}
 
-	init() {}
+	init(level) {}
 	update(level) {}
-	render() {}
+	render(level) {}
 }
 
 class Component {
@@ -38,7 +38,7 @@ class Component {
 		this.entity = entity
 	}
 
-	init() {
+	init(level) {
 		throw new Error("Cannot init an empty Component! You must extend this class");
 	}
 
@@ -46,7 +46,7 @@ class Component {
 		throw new Error("Cannot update an empty Component! You must extend this class");
 	}
 
-	render() {
+	render(level) {
 		throw new Error("Cannot render an empty Component! You must extend this class");
 	}
 }
@@ -58,7 +58,7 @@ class Renderer extends Component {
 		this.fgColor = fgColor;
 	}
 
-	render() {
+	render(level) {
 		throw new Error("Cannot render an empty renderer! You must extend this class");
 	}
 }
@@ -70,7 +70,7 @@ class CharRenderer extends Renderer {
 		this.bgColor = bgColor;
 	}
 
-	render() {
+	render(level) {
 		FONT.renderChar(this.char, this.entity.position.x, this.entity.position.y, this.fgColor, this.bgColor);
 	}
 }
@@ -261,7 +261,7 @@ class PersonNameGenerator extends NameGenerator {
 
 // extras/level.js
 class Level {
-	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = new Lightmap()) {
+	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = undefined) {
 		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
 		this.lightmap = lightmap;
@@ -279,14 +279,14 @@ class Level {
 		throw new Error("There is no Entity with the id: " + tag);
 	}
 
-	getEntityByTag(tag) {
+	getEntityWithTag(tag) {
 		for(const entity of this.entities)
 			if(entity.tags.includes(tag))
 				return entity;
 		throw new Error("There is no Entity with the tag: " + tag);
 	}
 
-	getEntitiesByTag(tag) {
+	getEntitiesWithTag(tag) {
 		var entities = [];
 		for(const entity of this.entities)
 			if(entity.tags.includes(tag))
@@ -295,16 +295,17 @@ class Level {
 	}
 
 	init() {
-		this.tilemap.init();
+		this.tilemap.init(this);
 		for(var entity of this.entities)
-			entity.init();
-		this.lightmap.init();
+			entity.init(this);
+		if(this.lightmap !== undefined)
+			this.lightmap.init(this);
 	}
 
 	update() {
-		this.tilemap.update();
+		this.tilemap.update(this);
 		for(var entity of this.entities)
-			entity.update(level);
+			entity.update(this);
 
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
@@ -314,14 +315,15 @@ class Level {
 	}
 
 	render() {
-		this.tilemap.render();
+		this.tilemap.render(this);
 		for(const renderLayer of this.renderOrder)
 			for(const entity of this.entities)
 				if(entity.renderer !== null
 				&& entity.renderer !== undefined
 				&& entity.renderer.layer == renderLayer)
-					entity.render();
-		this.lightmap.render();
+					entity.render(this);
+		if(this.lightmap !== undefined)
+			this.lightmap.render(this);
 	}
 }
 
@@ -345,7 +347,7 @@ class Animator extends Component {
 		this.dontInterrupt = false;
 	}
 
-	update() {
+	update(level) {
 		this.timer -= deltaTime;
 		if(this.timer <= 0) {
 			this.timer = this.animations[this.currentAnimation].frameDuration;
@@ -423,7 +425,7 @@ class Map extends Entity {
 		throw new Error("cannot get tile from 'Map' You must extend this class");
 	}
 
-	render() {
+	render(level) {
 		throw new Error("cannot render 'Map' You must extend this class");
 	}
 }
@@ -432,16 +434,28 @@ class Tilemap extends Map {
 	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
 		this.tileset = tileset;
+		this.onlyRenderInLight = false;
 	}
 
 	getTile(x, y) {
 		return this.tileset[this.tiles[y][x]];
 	}
 
-	render() {
+	init(level) {
+		if(level.lightmap !== undefined) {
+			const player = level.getEntityWithTag("player");
+			if(level.getEntityWithTag("player") !== undefined
+			&& level.getEntityWithTag("player") !== null) {
+				this.onlyRenderInLight = true;
+			}
+		}
+	}
+
+	render(level) {
 		for(var y = 0; y < this.tiles.length; y++)
 			for(var x = 0; x < this.tiles[y].length; x++)
-				FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+				if(level.lightmap.tiles[y][x] == 0)
+					FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
 	}
 }
 
@@ -454,9 +468,13 @@ class Lightmap extends Map {
 		return this.tiles[y][x];
 	}
 
+	init(level) {
+		this.update(level);
+	}
+
 	update(level) {
 		level.lightmap.tiles = init2DArray(WIDTH_TILE, HEIGHT_TILE, 1);
-		const player = level.getEntityByTag("player");
+		const player = level.getEntityWithTag("player");
 		const tile = level.tilemap.getTile(player.position.x, player.position.y);
 		if(tile.hasTag("tunnel")) {
 			for(var yOff = -1; yOff < 2; yOff++)
@@ -486,7 +504,7 @@ class Lightmap extends Map {
 		}
 	}
 
-	render() {
+	render(level) {
 		for(var y = 0; y < this.tiles.length; y++)
 			for(var x = 0; x < this.tiles[y].length; x++)
 				if(this.tiles[y][x] == 1)
@@ -502,7 +520,7 @@ class Camera extends Entity {
 			this.target = target;
 	}
 
-	update() {
+	update(level) {
 		if(this.target !== null
 		&& this.target !== undefined)
 			this.position = this.target.position;

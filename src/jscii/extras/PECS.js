@@ -27,9 +27,9 @@ class Entity {
 		this.destroyed = true;
 	}
 
-	init() {}
+	init(level) {}
 	update(level) {}
-	render() {}
+	render(level) {}
 }
 
 class Component {
@@ -37,7 +37,7 @@ class Component {
 		this.entity = entity
 	}
 
-	init() {
+	init(level) {
 		throw new Error("Cannot init an empty Component! You must extend this class");
 	}
 
@@ -45,7 +45,7 @@ class Component {
 		throw new Error("Cannot update an empty Component! You must extend this class");
 	}
 
-	render() {
+	render(level) {
 		throw new Error("Cannot render an empty Component! You must extend this class");
 	}
 }
@@ -57,7 +57,7 @@ class Renderer extends Component {
 		this.fgColor = fgColor;
 	}
 
-	render() {
+	render(level) {
 		throw new Error("Cannot render an empty renderer! You must extend this class");
 	}
 }
@@ -69,7 +69,7 @@ class CharRenderer extends Renderer {
 		this.bgColor = bgColor;
 	}
 
-	render() {
+	render(level) {
 		FONT.renderChar(this.char, this.entity.position.x, this.entity.position.y, this.fgColor, this.bgColor);
 	}
 }
