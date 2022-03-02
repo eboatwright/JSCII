@@ -5,39 +5,67 @@ class Vector2 {
 	}
 
 	add(other) {
-		this.x += other.x;
-		this.y += other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x += other.x;
+			this.y += other.y;
+		} else {
+			this.x += other;
+			this.y += other;
+		}
 	}
 
 	plus(other) {
-		return vector2(this.x + other.x, this.y + other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x + other.x, this.y + other.y);
+		return vector2(this.x + other, this.y + other);
 	}
 
 	subtract(other) {
-		this.x -= other.x;
-		this.y -= other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x -= other.x;
+			this.y -= other.y;
+		} else {
+			this.x -= other;
+			this.y -= other;
+		}
 	}
 
 	minus(other) {
-		return vector2(this.x - other.x, this.y - other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x - other.x, this.y - other.y);
+		return vector2(this.x - other, this.y - other);
 	}
 
 	multiply(other) {
-		this.x *= other.x;
-		this.y *= other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x *= other.x;
+			this.y *= other.y;
+		} else {
+			this.x *= other;
+			this.y *= other;
+		}
 	}
 
 	multipliedBy(other) {
-		return new Vector2(this.x * other.x, this.y * other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x * other.x, this.y * other.y);
+		return vector2(this.x * other, this.y * other);
 	}
 
 	divide(other) {
-		this.x /= other.x;
-		this.y /= other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x /= other.x;
+			this.y /= other.y;
+		} else {
+			this.x /= other;
+			this.y /= other;
+		}
 	}
 
 	dividedBy(other) {
-		return vector2(this.x / other.x, this.y / other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x / other.x, this.y / other.y);
+		return vector2(this.x / other, this.y / other);
 	}
 
 	magnitude() {

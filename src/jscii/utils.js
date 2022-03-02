@@ -38,3 +38,10 @@ function init2DArray(width, height, value = 0) {
 function copyVar(variable) {
 	return Object.assign({}, variable);
 }
+
+function copyArray(array) {
+	var result = [];
+	for(const value of array)
+		result.push(copyVar(value));
+	return result;
+}

@@ -167,7 +167,7 @@ window.addEventListener("keyup", function(event) {
 });
 
 function updateKeys() {
-	keysLast = Object.assign({}, keys);
+	keysLast = copyVar(keys);
 }
 
 function keyDown(key) {
@@ -226,6 +226,13 @@ function init2DArray(width, height, value = 0) {
 
 function copyVar(variable) {
 	return Object.assign({}, variable);
+}
+
+function copyArray(array) {
+	var result = [];
+	for(const value of array)
+		result.push(copyVar(value));
+	return result;
 }
 
 // font.js
@@ -326,39 +333,67 @@ class Vector2 {
 	}
 
 	add(other) {
-		this.x += other.x;
-		this.y += other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x += other.x;
+			this.y += other.y;
+		} else {
+			this.x += other;
+			this.y += other;
+		}
 	}
 
 	plus(other) {
-		return vector2(this.x + other.x, this.y + other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x + other.x, this.y + other.y);
+		return vector2(this.x + other, this.y + other);
 	}
 
 	subtract(other) {
-		this.x -= other.x;
-		this.y -= other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x -= other.x;
+			this.y -= other.y;
+		} else {
+			this.x -= other;
+			this.y -= other;
+		}
 	}
 
 	minus(other) {
-		return vector2(this.x - other.x, this.y - other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x - other.x, this.y - other.y);
+		return vector2(this.x - other, this.y - other);
 	}
 
 	multiply(other) {
-		this.x *= other.x;
-		this.y *= other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x *= other.x;
+			this.y *= other.y;
+		} else {
+			this.x *= other;
+			this.y *= other;
+		}
 	}
 
 	multipliedBy(other) {
-		return new Vector2(this.x * other.x, this.y * other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x * other.x, this.y * other.y);
+		return vector2(this.x * other, this.y * other);
 	}
 
 	divide(other) {
-		this.x /= other.x;
-		this.y /= other.y;
+		if(other.constructor.name == "Vector2") {
+			this.x /= other.x;
+			this.y /= other.y;
+		} else {
+			this.x /= other;
+			this.y /= other;
+		}
 	}
 
 	dividedBy(other) {
-		return vector2(this.x / other.x, this.y / other.y);
+		if(other.constructor.name == "Vector2")
+			return vector2(this.x / other.x, this.y / other.y);
+		return vector2(this.x / other, this.y / other);
 	}
 
 	magnitude() {

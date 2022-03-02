@@ -4,7 +4,7 @@ const HEIGHT_TILE = 33;
 var tilemap = new Tilemap(
 	"tilemap",
 	[
-		new Tile(SPACE, BLACK, BLACK, ["solid"]),
+		new Tile(SPACE, BLACK, BLACK, ["blank", "solid"]),
 		new Tile(PERIOD, MID_GRAY, BLACK, ["floor"]),
 		new Tile(COMMA, MID_GRAY, BLACK, ["floor"]),
 		new Tile(TOP_HORIZONTAL_LINE_3, MID_GRAY, DARK_GRAY, ["solid"]),
@@ -12,7 +12,7 @@ var tilemap = new Tilemap(
 	],
 	init2DArray(WIDTH_TILE, HEIGHT_TILE),
 );
-const dungeonGenerator = new DungeonGenerator(tilemap, vector2(8, 8), vector2(16, 16), 130);
+const dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 750);
 var level;
 
 class Player extends Entity {

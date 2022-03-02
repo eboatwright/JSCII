@@ -10,7 +10,7 @@ window.addEventListener("keyup", function(event) {
 });
 
 function updateKeys() {
-	keysLast = Object.assign({}, keys);
+	keysLast = copyVar(keys);
 }
 
 function keyDown(key) {

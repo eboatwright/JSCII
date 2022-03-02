@@ -5,7 +5,7 @@
 
 body, html {
 	height: 100%;
-	background-color: #40318d;
+	background-color: #000000;
 }
 
 #canvas {
@@ -15,4 +15,7 @@ body, html {
 	image-rendering: pixelated;
 	image-rendering: -moz-crisp-edges;
 	image-rendering: crisp-edges;
+	outline-color: #505050;
+	outline-style: solid;
+	outline-width: 2px;
 }

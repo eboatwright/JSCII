@@ -10,14 +10,14 @@ class WorldGenerator {
 }
 
 // TODO: make usable for games that aren't mine XD
-// TODO: deal with even number of rooms properly
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(18, 18), maxTries = 30) {
+	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
 		this.tilemap = tilemap;
 		this.minRoomSize = minRoomSize;
 		this.maxRoomSize = maxRoomSize;
 		this.maxTries = maxTries;
+		this.tries = 0;
 		this.rooms = [];
 	}
 
@@ -33,7 +33,7 @@ class DungeonGenerator extends WorldGenerator {
 			)
 		);
 		for(const room of this.rooms)
-			if(room.overlaps(new Rect(rect.position.minus(vOne()), rect.size.plus(vector2(2, 2)))))
+			if(room.overlaps(new Rect(rect.position.minus(1), rect.size.plus(2))))
 				return;
 
 		for(var y = 0; y < rect.size.y; y++) {
@@ -49,50 +49,60 @@ class DungeonGenerator extends WorldGenerator {
 				this.tilemap.tiles[y + rect.position.y][x + rect.position.x] = tile;
 			}
 		}
+
 		this.rooms.push(rect);
 	}
 
+	generateRooms(tries) {
+		while(this.tries < this.maxTries) {
+			this.createRoom();
+			this.tries += 1;
+		}
+	}
+
 	createHorizontalTunnel(x1, x2, y) {
-		for(var x = Math.min(x1, x2); x < Math.max(x1, x2); x++)
+		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
 			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
 				this.tilemap.tiles[y][x] = 4;
 	}
 
 	createVerticalTunnel(y1, y2, x) {
-		for(var y = Math.min(y1, y2); y < Math.max(y1, y2); y++)
+		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
 			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
 				this.tilemap.tiles[y][x] = 4;
 	}
 
-	placePlayer() {
-		const room = randomInArray(this.rooms);
-		return room.position.plus(room.size.dividedBy(vector2(2, 2)).rounded());
-	}
-
 	generateTunnels() {
-		while(this.rooms.length > 1) {
-			var aIndex = randomIndex(this.rooms);
-			var bIndex = randomIndex(this.rooms);
-			if(aIndex == bIndex)
-				continue;
+		var roomsLeft = copyArray(this.rooms);
+		var lastPos = roomsLeft[0].position.plus(roomsLeft[0].size.multipliedBy(0.5).rounded());
+		roomsLeft.splice(0, 1);
+		while(roomsLeft.length > 0) {
+			var roomToIndex = randomIndex(roomsLeft);
+			var roomTo = roomsLeft[roomToIndex];
+			var positionTo = roomTo.position.plus(roomTo.size.multipliedBy(0.5).rounded());
 
-			var a = this.rooms[aIndex];
-			var b = this.rooms[bIndex];
-			this.rooms.splice(aIndex, 1);
-			this.rooms.splice(bIndex, 1);
+			if(randomRange(0, 2) == 0) {
+				this.createHorizontalTunnel(lastPos.x, positionTo.x, lastPos.y);
+				this.createVerticalTunnel(lastPos.y, positionTo.y, positionTo.x);
+			} else {
+				this.createVerticalTunnel(lastPos.y, positionTo.y, lastPos.x);
+				this.createHorizontalTunnel(lastPos.x, positionTo.x, positionTo.y);
+			}
 
-			this.createHorizontalTunnel(a.position.x + Math.round(a.size.x * 0.5), b.position.x + Math.round(b.size.x * 0.5), a.position.y);
+			lastPos = positionTo;
+			roomsLeft.splice(roomToIndex, 1);
 		}
 	}
 
+	placePlayer() {
+		const room = randomInArray(this.rooms);
+		return room.position.plus(room.size.multipliedBy(0.5).rounded());
+	}
+
 	generate() {
-		for(var i = 0; i < this.maxTries; i++)
-			this.createRoom();
-
-		const playerPosition = this.placePlayer();
-
+		this.generateRooms();
 		this.generateTunnels();
 
-		return playerPosition;
+		return this.placePlayer();
 	}
 }
