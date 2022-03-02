@@ -4,6 +4,8 @@
    #    #     # #     # #     #
    #     #####  ######   ##### 
 
+The bugs list is self-explanatory
+
 The main todo list, is for things that will be in the main jscii.js file.
 So, things that you probably* don't want to write yourself.
 
@@ -14,13 +16,13 @@ The maybe list, is just things that I might've had suggestions for, or thought o
 that I might not want to add.
 
 
+Bugs list:
+	- there is a lighting bug where if it finds a tunnel, it thinks that it's a wall and doesn't finish the lighting
 
 Main todo list:
 	- ui system
 
 Extras todo list:
-	- lighting / fog
-	- world generation
 	- spell system
 
 Maybe list:

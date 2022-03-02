@@ -4,6 +4,10 @@ class Rect {
 		this.size = size;
 	}
 
+	center() {
+		return this.position.plus(this.size.multipliedBy(0.5));
+	}
+
 	top() { return this.position.y; }
 	bottom() { return this.position.y + this.size.y; }
 	left() { return this.position.x; }

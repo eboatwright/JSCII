@@ -42,8 +42,7 @@ class Level {
 	update() {
 		this.tilemap.update();
 		for(var entity of this.entities)
-			entity.update();
-		this.lightmap.update(this);
+			entity.update(level);
 
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)

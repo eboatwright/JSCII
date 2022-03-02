@@ -167,7 +167,7 @@ window.addEventListener("keyup", function(event) {
 });
 
 function updateKeys() {
-	keysLast = copyVar(keys);
+	keysLast = Object.assign({}, keys);
 }
 
 function keyDown(key) {
@@ -213,6 +213,10 @@ function randomInArray(array) {
 	return array[randomIndex(array)];
 }
 
+function flipCoin() {
+	return randomRange(0, 2) == 0;
+}
+
 function init2DArray(width, height, value = 0) {
 	var result = [];
 	for(var y = 0; y < height; y++) {
@@ -221,17 +225,6 @@ function init2DArray(width, height, value = 0) {
 			row.push(value);
 		result.push(row);
 	}
-	return result;
-}
-
-function copyVar(variable) {
-	return Object.assign({}, variable);
-}
-
-function copyArray(array) {
-	var result = [];
-	for(const value of array)
-		result.push(copyVar(value));
 	return result;
 }
 

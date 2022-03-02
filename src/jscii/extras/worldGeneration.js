@@ -9,7 +9,6 @@ class WorldGenerator {
 	}
 }
 
-// TODO: make usable for games that aren't mine XD
 class DungeonGenerator extends WorldGenerator {
 	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
@@ -38,8 +37,10 @@ class DungeonGenerator extends WorldGenerator {
 
 		for(var y = 0; y < rect.size.y; y++) {
 			for(var x = 0; x < rect.size.x; x++) {
+				// TODO
 				var tile = Math.floor(randomRange(1, 3));
 
+				// TODO
 				if(x == 0
 				|| y == 0
 				|| x == rect.size.x - 1
@@ -63,25 +64,25 @@ class DungeonGenerator extends WorldGenerator {
 	createHorizontalTunnel(x1, x2, y) {
 		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
 			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
+				// TODO
 				this.tilemap.tiles[y][x] = 4;
 	}
 
 	createVerticalTunnel(y1, y2, x) {
 		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
 			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
+				// TODO
 				this.tilemap.tiles[y][x] = 4;
 	}
 
 	generateTunnels() {
-		var roomsLeft = copyArray(this.rooms);
-		var lastPos = roomsLeft[0].position.plus(roomsLeft[0].size.multipliedBy(0.5).rounded());
-		roomsLeft.splice(0, 1);
-		while(roomsLeft.length > 0) {
-			var roomToIndex = randomIndex(roomsLeft);
-			var roomTo = roomsLeft[roomToIndex];
-			var positionTo = roomTo.position.plus(roomTo.size.multipliedBy(0.5).rounded());
+		var lastPos = this.rooms[0].center().rounded();
+		var doneRooms = 1;
+		while(doneRooms < this.rooms.length) {
+			var roomTo = this.rooms[doneRooms];
+			var positionTo = roomTo.center().rounded();
 
-			if(randomRange(0, 2) == 0) {
+			if(flipCoin()) {
 				this.createHorizontalTunnel(lastPos.x, positionTo.x, lastPos.y);
 				this.createVerticalTunnel(lastPos.y, positionTo.y, positionTo.x);
 			} else {
@@ -90,13 +91,14 @@ class DungeonGenerator extends WorldGenerator {
 			}
 
 			lastPos = positionTo;
-			roomsLeft.splice(roomToIndex, 1);
+
+			doneRooms += 1;
 		}
 	}
 
 	placePlayer() {
 		const room = randomInArray(this.rooms);
-		return room.position.plus(room.size.multipliedBy(0.5).rounded());
+		return room.center().rounded();
 	}
 
 	generate() {

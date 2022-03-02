@@ -23,7 +23,7 @@ class Entity {
 	}
 
 	init() {}
-	update() {}
+	update(level) {}
 	render() {}
 }
 
@@ -36,7 +36,7 @@ class Component {
 		throw new Error("Cannot init an empty Component! You must extend this class");
 	}
 
-	update() {
+	update(level) {
 		throw new Error("Cannot update an empty Component! You must extend this class");
 	}
 
