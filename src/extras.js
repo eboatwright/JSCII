@@ -119,6 +119,8 @@ class MoveAction extends Action {
 }
 
 // extras/worldGeneration.js
+// DISCLAIMER! This is not finished! *DONT* use in your own projects!
+
 class WorldGenerator {
 	constructor(width, height) {
 		this.width = width;
