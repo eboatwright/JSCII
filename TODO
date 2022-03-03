@@ -20,10 +20,16 @@ Bugs list:
 	- 
 
 Main todo list:
-	- ui system
+	- ui
 
 Extras todo list:
-	- spell system
+	- particles
+	- items
+	- inventory
+	- spells
+	- ai
+		- line of sight
+		- pathfinding
 
 Maybe list:
 	- 
