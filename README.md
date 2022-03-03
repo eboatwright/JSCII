@@ -1,5 +1,7 @@
 # JSCII
- An ASCII (technically PETSCII :)) "Game Engine" for JavaScript
+ An ASCII (technically PETSCII :)) "Game Engine" for JavaScript!<br>
+ I'm using the Commodore 64's PETSCII character set, and color palette!<br>
+ The one liberty I game myself, is the screen resolution. While the Commodore had 320x200, I'm using 480x300.
 
 # Usage
  Copy the jscii.js file into your directory, and load it into your HTML file!<br>
