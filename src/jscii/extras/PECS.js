@@ -84,3 +84,15 @@ class ArrayRenderer extends Renderer {
 		FONT.renderArray(this.array, this.entity.position.x, this.entity.position.y, this.fgColor, this.bgColor);
 	}
 }
+
+class TwoDArrayRenderer extends Renderer {
+	constructor(entity, layer = "default", array = [[QUESTION]], fgColor = WHITE, bgColor = BLACK) {
+		super(entity, layer, fgColor, bgColor);
+		this.array = array;
+	}
+
+	render(level) {
+		for(var i = 0; i < this.array.length; i++)
+			FONT.renderArray(this.array[i], this.entity.position.x, this.entity.position.y + i, this.fgColor, this.bgColor);
+	}
+}

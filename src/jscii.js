@@ -1,10 +1,19 @@
 // constants.js
+// The size of the tile (one pixel will get added between each as padding)
 const TILE_SIZE = 8;
 
+// The screen width (not scaled) in pixels
 const SCREEN_WIDTH = 480;
 const SCREEN_HEIGHT = 300;
+// How many times the width and height will be scaled onto the screen
+// Example:
+// SCREEN_WIDTH = 200;
+// SCREEN_HEIGHT = 100;
+// so the rendered screen, will be 400x200
 const SCREEN_SCALE = 2;
 
+// All the characters of the sheet!
+// You will notice, that there are some numbers missing. That is because, I removed all the duplicates (without removing them from the image)
 const AT = 0;
 const A = 1;
 const B = 2;
@@ -135,6 +144,7 @@ const TOP_LEFT_QUARTER = 126;
 const THICK_CHECKER = 127;
 // They would have saved alot of memory if they hadn't duplicated so many tiles XD
 
+// All the colors that the Commodore 64's PETSCII could render!
 const BLACK = "#000000";
 const WHITE = "#ffffff";
 const DARK_BROWN = "#883932";
@@ -152,10 +162,13 @@ const MID_LIGHT_GREEN = "#94e089";
 const MID_BLUE = "#7869c4";
 const LIGHT_GRAY = "#9f9f9f";
 
+// The color order on the texture sheet
 const COLORS = [BLACK, WHITE, DARK_BROWN, LIGHT_BLUE, PINK, MID_DARK_GREEN, DARK_BLUE, LIGHT_GREEN, MID_BROWN, DARK_GREEN, LIGHT_BROWN, DARK_GRAY, MID_GRAY, MID_LIGHT_GREEN, MID_BLUE, LIGHT_GRAY];
 
 // input.js
+// This stores whether or not the key is being held down right now
 var keys = [];
+// This stores whether or not the key was being held *last* frame
 var keysLast = [];
 
 window.addEventListener("keydown", function(event) {
@@ -173,53 +186,67 @@ function updateKeys() {
 	keysLast = Object.assign({}, keys);
 }
 
+// "Is the key being held *right now*"
 function keyDown(key) {
 	return keys[key];
 }
 
+// "Was the key held last frame?"
 function keyUp(key) {
 	return !keys[key];
 }
 
+// "Was the key *just* pressed this frame?"
 function keyJustDown(key) {
 	return keys[key] && !keysLast[key];
 }
 
+// "Was the key just released this frame?"
 function keyJustUp(key) {
 	return !keys[key] && keysLast[key];
 }
 
 // utils.js
-function loadImage(src) {
+// Most of these are just helper functions
+
+// For loading an image
+function loadImage(filePath) {
 	var image = new Image();
-	image.src = src;
+	image.src = filePath;
 	return image;
 }
 
+// For making sin wave calculation easier
 function sin(time, intensity, distance) {
 	return Math.sin(time * intensity) * distance;
 }
 
+// Linearly interpolate (smoothly go between) start, and end with the value smoothing (0 to 1)
 function lerp(start, end, smoothing) {
 	return (1 - smoothing) * start + smoothing * end;
 }
 
+// Generates a random number between min and max (exclusive) (will generate with a decimal)
 function randomRange(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
+// Return a random index of an array
 function randomIndex(array) {
 	return Math.floor(randomRange(0, array.length));
 }
 
+// Return a random value of an array
 function randomInArray(array) {
 	return array[randomIndex(array)];
 }
 
+// A function for making random choices easier (returns true or false)
 function flipCoin() {
 	return randomRange(0, 2) == 0;
 }
 
+// Easier array initialization
 function initArray(size, value = 0) {
 	var result = [];
 	for(var i = 0; i < size; i++)
@@ -235,6 +262,7 @@ function init2DArray(width, height, value = 0) {
 }
 
 // font.js
+// Convert all the tiles that can be conveyed with text (I might have missed some) to their indexes
 function toCharIndex(char) {
 	switch(char) {
 		case "@": return AT;
@@ -303,50 +331,67 @@ function toCharIndex(char) {
 	}
 }
 
+// You can instance your own Font class, but there is a constant named FONT that you *should* use
 class Font {
 	constructor() {
 		this.image = loadImage("res/commodore64_petscii.png");
 	}
 
+	// Renders a single char to the screen at the position with the colors specified
 	renderChar(char, x, y, fgColor, bgColor) {
+		// Check if you can even see the tile
 		if(!CAMERA.tileInView(x, y))
 			return;
+		// Set the context fill style for the background and render it
 		context.fillStyle = bgColor;
 		context.fillRect(x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE);
+		// Render the character with 1 pixel padding and the right colors
 		context.drawImage(this.image, toCharIndex(char) * (TILE_SIZE + 1), COLORS.indexOf(fgColor) * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE, x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), 8, 8);
 	}
 
+	// Render a sequence of characters
 	renderText(text, x, y, fgColor, bgColor) {
 		text = text.toUpperCase();
 		for(var i = 0; i < text.length; i++)
 			this.renderChar(text[i], x + i, y, fgColor, bgColor);
 	}
 
+	// This is for rendering alot of characters, that *can't* be conveyed with regular text.
+	// (Although you can put the indexes of "regular" letters through it)
 	renderArray(array, x, y, fgColor, bgColor) {
 		for(var i = 0; i < array.length; i++)
 			this.renderChar(array[i], x + i, y, fgColor, bgColor);
 	}
 }
 
+// A constant font that you *should* use for your rendering
 const FONT = new Font();
 
 // vector2.js
+// This one's big
+
+// A class for Vector calculation on a 2 dimensional plane
 class Vector2 {
 	constructor(x = 0, y = 0) {
 		this.x = x;
 		this.y = y;
 	}
 
+	// Add the other's values to these values
 	add(other) {
+		// Check if other is a vector2
 		if(other.constructor.name == "Vector2") {
+			// If so add the x and y
 			this.x += other.x;
 			this.y += other.y;
 		} else {
+			// If not, try to add it like a number
 			this.x += other;
 			this.y += other;
 		}
 	}
 
+	// *Returns* the value, instead of adding to the vector2
 	plus(other) {
 		if(other.constructor.name == "Vector2")
 			return vector2(this.x + other.x, this.y + other.y);
@@ -401,10 +446,12 @@ class Vector2 {
 		return vector2(this.x / other, this.y / other);
 	}
 
+	// Return the magnitude / length of the vector
 	magnitude() {
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
+	// Return the normalized vector instead of modifying the current vector
 	normalized() {
 		var magnitude = this.magnitude();
 		if(magnitude > 0)
@@ -412,49 +459,59 @@ class Vector2 {
 		return VZERO;
 	}
 
+	// Normalize the vector (Make x + y equal one (most of the time (math is weird)))
 	normalize() {
 		const normalized = this.normalized();
 		this.x = normalized.x;
 		this.y = normalized.y;
 	}
 
+	// Return the lerped vector
 	lerp(to, smoothing) {
 		return vector2(lerp(this.x, to.x, smoothing), lerp(this.y, to.y, smoothing));
 	}
 
+	// Lerp to "to" with the smoothing
 	lerpTo(to, smoothing) {
 		const value = this.lerp(to, smoothing);
 		this.x = value.x;
 		this.y = value.y;
 	}
 
+	// Get the distance between two vectors
 	distanceBetween(other) {
 		return this.minus(other).magnitude();
 	}
 
+	// Round this vector
 	round() {
 		this.x = Math.round(this.x);
 		this.y = Math.round(this.y);
 	}
 
+	// Return this vector but rounded
 	rounded() {
 		return vector2(Math.round(this.x), Math.round(this.y));
 	}
 
+	// Floor this vector
 	floor() {
 		this.x = Math.floor(this.x);
 		this.y = Math.floor(this.y);
 	}
 
+	// Return this vector floored
 	floored() {
 		return vector2(Math.floor(this.x), Math.floor(this.y));
 	}
 }
 
+// A helper function for making vectors
 function vector2(x, y) {
 	return new Vector2(x, y);
 }
 
+// Helper functions for making directional vectors
 function vZero() { return vector2(0, 0); }
 function vOne() { return vector2(1, 1); }
 function vUp() { return vector2(0, -1); }
@@ -463,39 +520,50 @@ function vLeft() { return vector2(-1, 0); }
 function vRight() { return vector2(1, 0); }
 
 // main.js
+// Get all of the HTML stuff
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
+// Used for delta time calculation
 var lastFrame = new Date().getTime();
 var deltaTime = 0;
+// This is just for checking if the init method has been called yet
 var initialized = false;
 
 window.onresize = function() {
+	// Set the canvas width to the *scaled* resolution
 	canvas.width = SCREEN_WIDTH * SCREEN_SCALE;
 	canvas.height = SCREEN_HEIGHT * SCREEN_SCALE;
+	// Set no smoothing for pixel art
 	context.imageSmoothingEnabled = false;
 	context.scale(SCREEN_SCALE, SCREEN_SCALE);
 }
+// Call this right now, so that the resolution and scaling can get setup
 window.onresize();
 
+// When the player clicks the canvas, request fullscreen
 canvas.onclick = canvas.ontouchstart = () => {
     canvas.requestFullscreen();
 };
 
+// Override these methods for your game
 function init() {}
 function update() {}
 function render() {}
 
 function backendUpdate() {
-	if(!initialized
-	&& init()) {
+	// Call the initialize function if it hasn't been called yet
+	if(!initialized) {
+		init();
 		initialized = true;
 	}
 
 	update();
+	// Update the keys *after* the update function
 	updateKeys();
 }
 
 function backendRender() {
+	// This just clears the screen
 	context.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	render();
 }
@@ -509,10 +577,13 @@ function backendTick() {
 	backendUpdate();
 	backendRender();
 
+	// For delta time calculation
 	lastFrame = new Date().getTime();
 
 	window.requestAnimationFrame(backendTick);
 }
 
+// This is JavaScript / HTML's native way of saying:
+// "Run this function as soon as you can"
 window.requestAnimationFrame(backendTick);
 

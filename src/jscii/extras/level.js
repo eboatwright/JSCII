@@ -32,6 +32,32 @@ class Level {
 		return entities;
 	}
 
+	isEntityAtPosition(position) {
+		for(const entity of this.entities)
+			if(entity.position == position)
+				return true;
+		return false;
+	}
+
+	getEntityAtPosition(position) {
+		if(!this.isEntityAtPosition(position))
+			return null;
+		for(const entity of this.entities)
+			if(entity.position == position)
+				return entity;
+		return null;
+	}
+
+	getEntitiesAtPosition(position) {
+		if(!this.isEntityAtPosition(position))
+			return null;
+		var entities = [];
+		for(const entity of this.entities)
+			if(entity.position == position)
+				entities.push(entity);
+		return entities;
+	}
+
 	init() {
 		this.tilemap.init(this);
 		for(var entity of this.entities)

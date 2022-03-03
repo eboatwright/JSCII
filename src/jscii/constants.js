@@ -1,9 +1,18 @@
+// The size of the tile (one pixel will get added between each as padding)
 const TILE_SIZE = 8;
 
+// The screen width (not scaled) in pixels
 const SCREEN_WIDTH = 480;
 const SCREEN_HEIGHT = 300;
+// How many times the width and height will be scaled onto the screen
+// Example:
+// SCREEN_WIDTH = 200;
+// SCREEN_HEIGHT = 100;
+// so the rendered screen, will be 400x200
 const SCREEN_SCALE = 2;
 
+// All the characters of the sheet!
+// You will notice, that there are some numbers missing. That is because, I removed all the duplicates (without removing them from the image)
 const AT = 0;
 const A = 1;
 const B = 2;
@@ -134,6 +143,7 @@ const TOP_LEFT_QUARTER = 126;
 const THICK_CHECKER = 127;
 // They would have saved alot of memory if they hadn't duplicated so many tiles XD
 
+// All the colors that the Commodore 64's PETSCII could render!
 const BLACK = "#000000";
 const WHITE = "#ffffff";
 const DARK_BROWN = "#883932";
@@ -151,4 +161,5 @@ const MID_LIGHT_GREEN = "#94e089";
 const MID_BLUE = "#7869c4";
 const LIGHT_GRAY = "#9f9f9f";
 
+// The color order on the texture sheet
 const COLORS = [BLACK, WHITE, DARK_BROWN, LIGHT_BLUE, PINK, MID_DARK_GREEN, DARK_BLUE, LIGHT_GREEN, MID_BROWN, DARK_GREEN, LIGHT_BROWN, DARK_GRAY, MID_GRAY, MID_LIGHT_GREEN, MID_BLUE, LIGHT_GRAY];

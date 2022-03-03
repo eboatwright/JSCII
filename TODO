@@ -20,13 +20,7 @@ Bugs list:
 	- 
 
 Main todo list:
-	- documentation / comments
-		- constants.js
-		- font.js
-		- input.js
-		- main.js
-		- utils.js
-		- vector2.js
+	- 
 
 Extras todo list:
 	- documentation / comments
@@ -40,12 +34,13 @@ Extras todo list:
 		- rect.js
 		- ui.js
 		- worldGeneration.js
-		
+
 	- update action system
 		- kick
 		- open
 		- close
 		- throw
+
 	- particles
 	- items
 	- inventory

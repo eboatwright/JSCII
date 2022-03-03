@@ -86,6 +86,18 @@ class ArrayRenderer extends Renderer {
 	}
 }
 
+class TwoDArrayRenderer extends Renderer {
+	constructor(entity, layer = "default", array = [[QUESTION]], fgColor = WHITE, bgColor = BLACK) {
+		super(entity, layer, fgColor, bgColor);
+		this.array = array;
+	}
+
+	render(level) {
+		for(var i = 0; i < this.array.length; i++)
+			FONT.renderArray(this.array[i], this.entity.position.x, this.entity.position.y + i, this.fgColor, this.bgColor);
+	}
+}
+
 // extras/action.js
 class Action {
 	constructor(entity) {
@@ -365,6 +377,32 @@ class Level {
 		return entities;
 	}
 
+	isEntityAtPosition(position) {
+		for(const entity of this.entities)
+			if(entity.position == position)
+				return true;
+		return false;
+	}
+
+	getEntityAtPosition(position) {
+		if(!this.isEntityAtPosition(position))
+			return null;
+		for(const entity of this.entities)
+			if(entity.position == position)
+				return entity;
+		return null;
+	}
+
+	getEntitiesAtPosition(position) {
+		if(!this.isEntityAtPosition(position))
+			return null;
+		var entities = [];
+		for(const entity of this.entities)
+			if(entity.position == position)
+				entities.push(entity);
+		return entities;
+	}
+
 	init() {
 		this.tilemap.init(this);
 		for(var entity of this.entities)
@@ -579,16 +617,15 @@ class Lightmap extends Map {
 
 // extras/camera.js
 class Camera extends Entity {
-	constructor(id = "camera", position = vZero(), tags = ["camera"], target = null) {
+	constructor(id = "camera", position = vZero(), tags = ["camera"], target = undefined, smoothing = 1) {
 		super(id, position, tags);
-		if(target !== null)
-			this.target = target;
+		this.target = target;
+		this.smoothing = smoothing;
 	}
 
 	update(level) {
-		if(this.target !== null
-		&& this.target !== undefined)
-			this.position = this.target.position;
+		if(this.target !== undefined)
+			this.position.lerpTo(this.target.position, this.smoothing);
 	}
 
 	top() { return this.position.y; }

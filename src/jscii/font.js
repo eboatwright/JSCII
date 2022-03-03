@@ -1,3 +1,4 @@
+// Convert all the tiles that can be conveyed with text (I might have missed some) to their indexes
 function toCharIndex(char) {
 	switch(char) {
 		case "@": return AT;
@@ -66,29 +67,38 @@ function toCharIndex(char) {
 	}
 }
 
+// You can instance your own Font class, but there is a constant named FONT that you *should* use
 class Font {
 	constructor() {
 		this.image = loadImage("res/commodore64_petscii.png");
 	}
 
+	// Renders a single char to the screen at the position with the colors specified
 	renderChar(char, x, y, fgColor, bgColor) {
+		// Check if you can even see the tile
 		if(!CAMERA.tileInView(x, y))
 			return;
+		// Set the context fill style for the background and render it
 		context.fillStyle = bgColor;
 		context.fillRect(x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE);
+		// Render the character with 1 pixel padding and the right colors
 		context.drawImage(this.image, toCharIndex(char) * (TILE_SIZE + 1), COLORS.indexOf(fgColor) * (TILE_SIZE + 1), TILE_SIZE, TILE_SIZE, x * (TILE_SIZE + 1), y * (TILE_SIZE + 1), 8, 8);
 	}
 
+	// Render a sequence of characters
 	renderText(text, x, y, fgColor, bgColor) {
 		text = text.toUpperCase();
 		for(var i = 0; i < text.length; i++)
 			this.renderChar(text[i], x + i, y, fgColor, bgColor);
 	}
 
+	// This is for rendering alot of characters, that *can't* be conveyed with regular text.
+	// (Although you can put the indexes of "regular" letters through it)
 	renderArray(array, x, y, fgColor, bgColor) {
 		for(var i = 0; i < array.length; i++)
 			this.renderChar(array[i], x + i, y, fgColor, bgColor);
 	}
 }
 
+// A constant font that you *should* use for your rendering
 const FONT = new Font();

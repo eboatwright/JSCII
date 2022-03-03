@@ -101,14 +101,10 @@ init = function() {
 	level.addEntity(new Text("text", vector2(1, 1), "HP: 3 | MP: 3", WHITE, BLACK));
 
 	level.init();
-
-	return true;
 }
 
 update = function() {
 	level.update();
-	if(keyJustDown("l"))
-		level.lightmap.tiles = init2DArray(WIDTH_TILE, HEIGHT_TILE, 0);
 }
 
 render = function() {

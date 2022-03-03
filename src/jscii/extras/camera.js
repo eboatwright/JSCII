@@ -1,14 +1,13 @@
 class Camera extends Entity {
-	constructor(id = "camera", position = vZero(), tags = ["camera"], target = null) {
+	constructor(id = "camera", position = vZero(), tags = ["camera"], target = undefined, smoothing = 1) {
 		super(id, position, tags);
-		if(target !== null)
-			this.target = target;
+		this.target = target;
+		this.smoothing = smoothing;
 	}
 
 	update(level) {
-		if(this.target !== null
-		&& this.target !== undefined)
-			this.position = this.target.position;
+		if(this.target !== undefined)
+			this.position.lerpTo(this.target.position, this.smoothing);
 	}
 
 	top() { return this.position.y; }
