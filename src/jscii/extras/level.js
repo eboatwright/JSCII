@@ -1,5 +1,5 @@
 class Level {
-	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = undefined) {
+	constructor(renderOrder = ["default", "lighting"], tilemap = new Tilemap(), lightmap = undefined) {
 		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
 		this.lightmap = lightmap;
@@ -54,13 +54,15 @@ class Level {
 
 	render() {
 		this.tilemap.render(this);
-		for(const renderLayer of this.renderOrder)
+		for(const renderLayer of this.renderOrder) {
+			if(renderLayer == "lighting"
+			&& this.lightmap !== undefined)
+				this.lightmap.render(this);
 			for(const entity of this.entities)
 				if(entity.renderer !== null
 				&& entity.renderer !== undefined
 				&& entity.renderer.layer == renderLayer)
 					entity.render(this);
-		if(this.lightmap !== undefined)
-			this.lightmap.render(this);
+		}
 	}
 }

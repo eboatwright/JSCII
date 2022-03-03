@@ -52,10 +52,11 @@ class Component {
 }
 
 class Renderer extends Component {
-	constructor(entity, layer = "default", fgColor = WHITE) {
+	constructor(entity, layer = "default", fgColor = WHITE, bgColor = BLACK) {
 		super(entity);
 		this.layer = layer;
 		this.fgColor = fgColor;
+		this.bgColor = bgColor;
 	}
 
 	render(level) {
@@ -65,13 +66,23 @@ class Renderer extends Component {
 
 class CharRenderer extends Renderer {
 	constructor(entity, layer = "default", char = QUESTION, fgColor = WHITE, bgColor = BLACK) {
-		super(entity, layer, fgColor);
+		super(entity, layer, fgColor, bgColor);
 		this.char = char;
-		this.bgColor = bgColor;
 	}
 
 	render(level) {
 		FONT.renderChar(this.char, this.entity.position.x, this.entity.position.y, this.fgColor, this.bgColor);
+	}
+}
+
+class ArrayRenderer extends Renderer {
+	constructor(entity, layer = "default", array = [QUESTION], fgColor = WHITE, bgColor = BLACK) {
+		super(entity, layer, fgColor, bgColor);
+		this.array = array;
+	}
+
+	render(level) {
+		FONT.renderArray(this.array, this.entity.position.x, this.entity.position.y, this.fgColor, this.bgColor);
 	}
 }
 
@@ -115,6 +126,65 @@ class MoveAction extends Action {
 			this.entity.position.subtract(this.direction);
 
 		this.performed = true;
+	}
+}
+
+// extras/ui.js
+class PanelRenderer extends Renderer {
+	constructor(entity, layer = "ui", size = vOne(), fgColor = WHITE, bgColor = BLACK) {
+		super(entity, layer, fgColor, bgColor);
+		this.size = size;
+	}
+
+	render(level) {
+		for(var y = 0; y < this.size.y; y++){
+			for(var x = 0; x < this.size.x; x++) {
+				var char = SPACE;
+
+				if(x == 0) {
+					char = LEFT_VERTICAL_LINE_3;
+					if(y == 0)
+						char = FWD_SLASH;
+					if(y == this.size.y - 1)
+						char = BACK_DIAGONAL_LINE;
+				} else if(x == this.size.x - 1) {
+					char = RIGHT_VERTICAL_LINE_3;
+					if(y == 0)
+						char = BACK_DIAGONAL_LINE;
+					if(y == this.size.y - 1)
+						char = FWD_SLASH;
+				} else {
+					if(y == 0)
+						char = TOP_HORIZONTAL_LINE_3;
+					if(y == this.size.y - 1)
+						char = BOTTOM_HORIZONTAL_LINE_3;
+				}
+
+				FONT.renderChar(char, this.entity.position.x + x, this.entity.position.y + y, this.fgColor, this.bgColor);
+			}
+		}
+	}
+}
+
+class TextRenderer extends Renderer {
+	constructor(entity, layer = "ui", text = "", fgColor = WHITE, bgColor = BLACK) {
+		super(entity, layer, fgColor, bgColor);
+		this.text = text;
+	}
+
+	render(level) {
+		FONT.renderText(this.text, this.entity.position.x, this.entity.position.y, this.fgColor, this.bgColor);
+	}
+}
+
+class Text extends Entity {
+	constructor(id = "text", position = vZero(), text = "", fgColor = WHITE, bgColor = BLACK, layer = "ui", tags = ["ui"]) {
+		super(id, position, tags);
+		this.renderer = new TextRenderer(this, layer, text, fgColor, bgColor);
+	}
+
+	render(level) {
+		this.renderer.render(level);
 	}
 }
 
@@ -263,7 +333,7 @@ class PersonNameGenerator extends NameGenerator {
 
 // extras/level.js
 class Level {
-	constructor(renderOrder = ["default"], tilemap = new Tilemap(), lightmap = undefined) {
+	constructor(renderOrder = ["default", "lighting"], tilemap = new Tilemap(), lightmap = undefined) {
 		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
 		this.lightmap = lightmap;
@@ -318,14 +388,16 @@ class Level {
 
 	render() {
 		this.tilemap.render(this);
-		for(const renderLayer of this.renderOrder)
+		for(const renderLayer of this.renderOrder) {
+			if(renderLayer == "lighting"
+			&& this.lightmap !== undefined)
+				this.lightmap.render(this);
 			for(const entity of this.entities)
 				if(entity.renderer !== null
 				&& entity.renderer !== undefined
 				&& entity.renderer.layer == renderLayer)
 					entity.render(this);
-		if(this.lightmap !== undefined)
-			this.lightmap.render(this);
+		}
 	}
 }
 

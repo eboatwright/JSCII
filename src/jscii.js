@@ -220,14 +220,17 @@ function flipCoin() {
 	return randomRange(0, 2) == 0;
 }
 
+function initArray(size, value = 0) {
+	var result = [];
+	for(var i = 0; i < size; i++)
+		result.push(value);
+	return result;
+}
+
 function init2DArray(width, height, value = 0) {
 	var result = [];
-	for(var y = 0; y < height; y++) {
-		var row = [];
-		for(var x = 0; x < width; x++)
-			row.push(value);
-		result.push(row);
-	}
+	for(var y = 0; y < height; y++)
+		result.push(initArray(width, value));
 	return result;
 }
 
@@ -316,6 +319,11 @@ class Font {
 		text = text.toUpperCase();
 		for(var i = 0; i < text.length; i++)
 			this.renderChar(text[i], x + i, y, fgColor, bgColor);
+	}
+
+	renderArray(array, x, y, fgColor, bgColor) {
+		for(var i = 0; i < array.length; i++)
+			this.renderChar(array[i], x + i, y, fgColor, bgColor);
 	}
 }
 

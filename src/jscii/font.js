@@ -83,6 +83,11 @@ class Font {
 		for(var i = 0; i < text.length; i++)
 			this.renderChar(text[i], x + i, y, fgColor, bgColor);
 	}
+
+	renderArray(array, x, y, fgColor, bgColor) {
+		for(var i = 0; i < array.length; i++)
+			this.renderChar(array[i], x + i, y, fgColor, bgColor);
+	}
 }
 
 const FONT = new Font();

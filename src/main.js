@@ -10,6 +10,7 @@ const TILESET = [
 ];
 var tilemap;
 var dungeonGenerator;
+var testText;
 var level;
 
 class PlayerController extends Component {
@@ -55,6 +56,28 @@ class Player extends Entity {
 	}
 }
 
+class HUD extends Entity {
+	constructor(position = vZero()) {
+		super("hud", position, ["hud"]);
+		this.renderer = new PanelRenderer(this, "ui", vector2(51, 8), WHITE, BLACK);
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
+class Seperator extends Entity {
+	constructor(position = vZero(), fgColor = WHITE) {
+		super("seperator", position, ["seperator", "hud"]);
+		this.renderer = new ArrayRenderer(this, "ui", initArray(WIDTH_TILE, BOTTOM_HORIZONTAL_LINE_3), fgColor, BLACK);
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
 init = function() {
 	tilemap = new Tilemap(
 		"tilemap",
@@ -67,12 +90,15 @@ init = function() {
 	const playerPosition = dungeonGenerator.generate();
 
 	level = new Level(
-		["default"],
+		["default", "lighting", "ui"],
 		tilemap,
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
 
 	level.addEntity(new Player(playerPosition));
+
+	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
+	level.addEntity(new Text("text", vector2(1, 1), "HP: 3", WHITE, BLACK));
 
 	level.init();
 
