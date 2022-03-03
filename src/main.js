@@ -1,18 +1,15 @@
 const WIDTH_TILE = 53;
 const HEIGHT_TILE = 33;
 
-var tilemap = new Tilemap(
-	"tilemap",
-	[
-		new Tile(SPACE, BLACK, BLACK, ["blank", "solid"]),
-		new Tile(PERIOD, MID_GRAY, BLACK, ["floor", "roomLighted"]),
-		new Tile(COMMA, MID_GRAY, BLACK, ["floor", "roomLighted"]),
-		new Tile(TOP_HORIZONTAL_LINE_3, MID_GRAY, DARK_GRAY, ["solid"]),
-		new Tile(HASH, MID_GRAY, DARK_GRAY, ["tunnel"]),
-	],
-	init2DArray(WIDTH_TILE, HEIGHT_TILE),
-);
-const dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 750);
+const TILESET = [
+	new Tile(SPACE, BLACK, BLACK, ["blank", "solid"]),
+	new Tile(PERIOD, MID_GRAY, BLACK, ["floor", "roomLighted"]),
+	new Tile(COMMA, MID_GRAY, BLACK, ["floor", "roomLighted"]),
+	new Tile(TOP_HORIZONTAL_LINE_3, MID_GRAY, DARK_GRAY, ["solid"]),
+	new Tile(HASH, MID_GRAY, DARK_GRAY, ["tunnel"]),
+];
+var tilemap;
+var dungeonGenerator;
 var level;
 
 class PlayerController extends Component {
@@ -59,6 +56,14 @@ class Player extends Entity {
 }
 
 init = function() {
+	tilemap = new Tilemap(
+		"tilemap",
+		TILESET,
+		init2DArray(WIDTH_TILE, HEIGHT_TILE),
+	);
+
+	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 1000);
+
 	const playerPosition = dungeonGenerator.generate();
 
 	level = new Level(
