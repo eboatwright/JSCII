@@ -203,12 +203,15 @@ class WorldGenerator {
 }
 
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50) {
+	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
 		this.tilemap = tilemap;
 		this.minRoomSize = minRoomSize;
 		this.maxRoomSize = maxRoomSize;
 		this.maxTries = maxTries;
+		this.floorTiles = floorTiles;
+		this.wallTile = wallTile;
+		this.tunnelTile = tunnelTile;
 		this.tries = 0;
 		this.rooms = [];
 	}
@@ -216,8 +219,8 @@ class DungeonGenerator extends WorldGenerator {
 	createRoom() {
 		const rect = new Rect(
 			vector2(
-				Math.floor(randomRange(1, this.tilemap.tiles[0].length - this.maxRoomSize.x)),
-				Math.floor(randomRange(1, this.tilemap.tiles.length - this.maxRoomSize.y))
+				Math.floor(randomRange(1, this.width - this.maxRoomSize.x)),
+				Math.floor(randomRange(1, this.height - this.maxRoomSize.y))
 			),
 			vector2(
 				Math.floor(randomRange(this.minRoomSize.x, this.maxRoomSize.x)),
@@ -230,15 +233,13 @@ class DungeonGenerator extends WorldGenerator {
 
 		for(var y = 0; y < rect.size.y; y++) {
 			for(var x = 0; x < rect.size.x; x++) {
-				// TODO
-				var tile = Math.floor(randomRange(1, 3));
+				var tile = randomInArray(this.floorTiles);
 
-				// TODO
 				if(x == 0
 				|| y == 0
 				|| x == rect.size.x - 1
 				|| y == rect.size.y - 1)
-					tile = 3;
+					tile = this.wallTile;
 
 				this.tilemap.tiles[y + rect.position.y][x + rect.position.x] = tile;
 			}
@@ -256,16 +257,14 @@ class DungeonGenerator extends WorldGenerator {
 
 	createHorizontalTunnel(x1, x2, y) {
 		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
-			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
-				// TODO
-				this.tilemap.tiles[y][x] = 4;
+			if(!this.tilemap.getTile(x, y).hasTag("floor"))
+				this.tilemap.tiles[y][x] = this.tunnelTile;
 	}
 
 	createVerticalTunnel(y1, y2, x) {
 		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
-			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
-				// TODO
-				this.tilemap.tiles[y][x] = 4;
+			if(!this.tilemap.getTile(x, y).hasTag("floor"))
+				this.tilemap.tiles[y][x] = this.tunnelTile;
 	}
 
 	generateTunnels() {
@@ -495,10 +494,6 @@ class Map extends Entity {
 		this.tileSize = tileSize;
 	}
 
-	getTile(x, y) {
-		throw new Error("cannot get tile from 'Map' You must extend this class");
-	}
-
 	render(level) {
 		throw new Error("cannot render 'Map' You must extend this class");
 	}
@@ -519,27 +514,26 @@ class Tilemap extends Map {
 		if(level.lightmap !== undefined) {
 			const player = level.getEntityWithTag("player");
 			if(level.getEntityWithTag("player") !== undefined
-			&& level.getEntityWithTag("player") !== null) {
+			&& level.getEntityWithTag("player") !== null)
 				this.onlyRenderInLight = true;
-			}
 		}
 	}
 
 	render(level) {
-		for(var y = 0; y < this.tiles.length; y++)
-			for(var x = 0; x < this.tiles[y].length; x++)
-				if(level.lightmap.tiles[y][x] == 0)
-					FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+		for(var y = 0; y < this.tiles.length; y++) {
+			for(var x = 0; x < this.tiles[y].length; x++) {
+				if(this.onlyRenderInLight
+				&& level.lightmap.tiles[y][x] == 1)
+					continue;
+				FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+			}
+		}
 	}
 }
 
 class Lightmap extends Map {
 	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
-	}
-
-	getTile(x, y) {
-		return this.tiles[y][x];
 	}
 
 	init(level) {

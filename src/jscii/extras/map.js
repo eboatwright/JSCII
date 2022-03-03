@@ -18,10 +18,6 @@ class Map extends Entity {
 		this.tileSize = tileSize;
 	}
 
-	getTile(x, y) {
-		throw new Error("cannot get tile from 'Map' You must extend this class");
-	}
-
 	render(level) {
 		throw new Error("cannot render 'Map' You must extend this class");
 	}
@@ -42,27 +38,26 @@ class Tilemap extends Map {
 		if(level.lightmap !== undefined) {
 			const player = level.getEntityWithTag("player");
 			if(level.getEntityWithTag("player") !== undefined
-			&& level.getEntityWithTag("player") !== null) {
+			&& level.getEntityWithTag("player") !== null)
 				this.onlyRenderInLight = true;
-			}
 		}
 	}
 
 	render(level) {
-		for(var y = 0; y < this.tiles.length; y++)
-			for(var x = 0; x < this.tiles[y].length; x++)
-				if(level.lightmap.tiles[y][x] == 0)
-					FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+		for(var y = 0; y < this.tiles.length; y++) {
+			for(var x = 0; x < this.tiles[y].length; x++) {
+				if(this.onlyRenderInLight
+				&& level.lightmap.tiles[y][x] == 1)
+					continue;
+				FONT.renderChar(this.getTile(x, y).char, x, y, this.getTile(x, y).fgColor, this.getTile(x, y).bgColor);
+			}
+		}
 	}
 }
 
 class Lightmap extends Map {
 	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
-	}
-
-	getTile(x, y) {
-		return this.tiles[y][x];
 	}
 
 	init(level) {

@@ -23,6 +23,11 @@ Main todo list:
 	- 
 
 Extras todo list:
+	- update action system
+		- kick
+		- open
+		- close
+		- throw
 	- particles
 	- items
 	- inventory

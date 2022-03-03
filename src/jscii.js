@@ -298,6 +298,7 @@ function toCharIndex(char) {
 		case "=": return EQUAL;
 		case ">": return GREATER_THAN;
 		case "?": return QUESTION;
+		case "|": return VERTICAL_LINE;
 		default: return char;
 	}
 }

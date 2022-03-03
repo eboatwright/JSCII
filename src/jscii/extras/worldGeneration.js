@@ -12,12 +12,15 @@ class WorldGenerator {
 }
 
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50) {
+	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
 		this.tilemap = tilemap;
 		this.minRoomSize = minRoomSize;
 		this.maxRoomSize = maxRoomSize;
 		this.maxTries = maxTries;
+		this.floorTiles = floorTiles;
+		this.wallTile = wallTile;
+		this.tunnelTile = tunnelTile;
 		this.tries = 0;
 		this.rooms = [];
 	}
@@ -25,8 +28,8 @@ class DungeonGenerator extends WorldGenerator {
 	createRoom() {
 		const rect = new Rect(
 			vector2(
-				Math.floor(randomRange(1, this.tilemap.tiles[0].length - this.maxRoomSize.x)),
-				Math.floor(randomRange(1, this.tilemap.tiles.length - this.maxRoomSize.y))
+				Math.floor(randomRange(1, this.width - this.maxRoomSize.x)),
+				Math.floor(randomRange(1, this.height - this.maxRoomSize.y))
 			),
 			vector2(
 				Math.floor(randomRange(this.minRoomSize.x, this.maxRoomSize.x)),
@@ -39,15 +42,13 @@ class DungeonGenerator extends WorldGenerator {
 
 		for(var y = 0; y < rect.size.y; y++) {
 			for(var x = 0; x < rect.size.x; x++) {
-				// TODO
-				var tile = Math.floor(randomRange(1, 3));
+				var tile = randomInArray(this.floorTiles);
 
-				// TODO
 				if(x == 0
 				|| y == 0
 				|| x == rect.size.x - 1
 				|| y == rect.size.y - 1)
-					tile = 3;
+					tile = this.wallTile;
 
 				this.tilemap.tiles[y + rect.position.y][x + rect.position.x] = tile;
 			}
@@ -65,16 +66,14 @@ class DungeonGenerator extends WorldGenerator {
 
 	createHorizontalTunnel(x1, x2, y) {
 		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
-			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
-				// TODO
-				this.tilemap.tiles[y][x] = 4;
+			if(!this.tilemap.getTile(x, y).hasTag("floor"))
+				this.tilemap.tiles[y][x] = this.tunnelTile;
 	}
 
 	createVerticalTunnel(y1, y2, x) {
 		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
-			if(!this.tilemap.getTile(x, y).tags.includes("floor"))
-				// TODO
-				this.tilemap.tiles[y][x] = 4;
+			if(!this.tilemap.getTile(x, y).hasTag("floor"))
+				this.tilemap.tiles[y][x] = this.tunnelTile;
 	}
 
 	generateTunnels() {

@@ -82,10 +82,10 @@ init = function() {
 	tilemap = new Tilemap(
 		"tilemap",
 		TILESET,
-		init2DArray(WIDTH_TILE, HEIGHT_TILE),
+		init2DArray(WIDTH_TILE, HEIGHT_TILE)
 	);
 
-	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 1000);
+	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 50, [1, 2], 3, 4);
 
 	const playerPosition = dungeonGenerator.generate();
 
@@ -98,7 +98,7 @@ init = function() {
 	level.addEntity(new Player(playerPosition));
 
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
-	level.addEntity(new Text("text", vector2(1, 1), "HP: 3", WHITE, BLACK));
+	level.addEntity(new Text("text", vector2(1, 1), "HP: 3 | MP: 3", WHITE, BLACK));
 
 	level.init();
 
