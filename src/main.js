@@ -85,7 +85,7 @@ init = function() {
 		init2DArray(WIDTH_TILE, HEIGHT_TILE)
 	);
 
-	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 50, [1, 2], 3, 4);
+	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 50, [1, 2], 3, 4, vector2(1, 4), vector2(0, 0));
 
 	const playerPosition = dungeonGenerator.generate();
 
@@ -107,6 +107,8 @@ init = function() {
 
 update = function() {
 	level.update();
+	if(keyJustDown("l"))
+		level.lightmap.tiles = init2DArray(WIDTH_TILE, HEIGHT_TILE, 0);
 }
 
 render = function() {

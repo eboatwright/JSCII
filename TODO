@@ -17,12 +17,30 @@ that I might not want to add.
 
 
 Bugs list:
-	- ui covers up some of the dungeon
-
-Main todo list:
 	- 
 
+Main todo list:
+	- documentation / comments
+		- constants.js
+		- font.js
+		- input.js
+		- main.js
+		- utils.js
+		- vector2.js
+
 Extras todo list:
+	- documentation / comments
+		- action.js
+		- animations.js
+		- camera.js
+		- level.js
+		- map.js
+		- nameGeneration.js
+		- PECS.js
+		- rect.js
+		- ui.js
+		- worldGeneration.js
+		
 	- update action system
 		- kick
 		- open

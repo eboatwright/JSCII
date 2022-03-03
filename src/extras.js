@@ -189,8 +189,6 @@ class Text extends Entity {
 }
 
 // extras/worldGeneration.js
-// DISCLAIMER! This is not finished! *DONT* use in your own projects!
-
 class WorldGenerator {
 	constructor(width, height) {
 		this.width = width;
@@ -203,7 +201,7 @@ class WorldGenerator {
 }
 
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4) {
+	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 50, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero()) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
 		this.tilemap = tilemap;
 		this.minRoomSize = minRoomSize;
@@ -212,6 +210,8 @@ class DungeonGenerator extends WorldGenerator {
 		this.floorTiles = floorTiles;
 		this.wallTile = wallTile;
 		this.tunnelTile = tunnelTile;
+		this.posOffset = posOffset;
+		this.sizeOffset = sizeOffset;
 		this.tries = 0;
 		this.rooms = [];
 	}
@@ -219,8 +219,8 @@ class DungeonGenerator extends WorldGenerator {
 	createRoom() {
 		const rect = new Rect(
 			vector2(
-				Math.floor(randomRange(1, this.width - this.maxRoomSize.x)),
-				Math.floor(randomRange(1, this.height - this.maxRoomSize.y))
+				Math.floor(randomRange(this.posOffset.x, this.width - this.maxRoomSize.x - this.sizeOffset.x)),
+				Math.floor(randomRange(this.posOffset.y, this.height - this.maxRoomSize.y - this.sizeOffset.y))
 			),
 			vector2(
 				Math.floor(randomRange(this.minRoomSize.x, this.maxRoomSize.x)),
