@@ -25,10 +25,6 @@ Main todo list:
 Extras todo list:
 	- documentation / comments
 		- action.js
-		- animations.js
-		- camera.js
-		- level.js
-		- map.js
 		- nameGeneration.js
 		- PECS.js
 		- rect.js

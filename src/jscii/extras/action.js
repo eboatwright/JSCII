@@ -1,3 +1,6 @@
+// This file won't have documentation / comments for a little while, because I'm still figuring
+// out how I want to structure it
+
 class Action {
 	constructor(entity) {
 		this.entity = entity;

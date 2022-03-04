@@ -1,4 +1,6 @@
+// This is a class that handles *mostly* Entity management
 class Level {
+	// lightmap defaults to undefined, because some games might not have lighting
 	constructor(renderOrder = ["default", "lighting"], tilemap = new Tilemap(), lightmap = undefined) {
 		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
@@ -10,6 +12,7 @@ class Level {
 		this.entities.push(entity);
 	}
 
+	// Returns the first Entity it finds with that ID
 	getEntityById(id) {
 		for(const entity of this.entities)
 			if(entity.id == id)
@@ -17,6 +20,7 @@ class Level {
 		throw new Error("There is no Entity with the id: " + tag);
 	}
 
+	// Returns the first Entity it finds with that tag
 	getEntityWithTag(tag) {
 		for(const entity of this.entities)
 			if(entity.tags.includes(tag))
@@ -24,6 +28,7 @@ class Level {
 		throw new Error("There is no Entity with the tag: " + tag);
 	}
 
+	// Returns all entities that have the specified tag
 	getEntitiesWithTag(tag) {
 		var entities = [];
 		for(const entity of this.entities)
@@ -32,6 +37,7 @@ class Level {
 		return entities;
 	}
 
+	// Check if there is an Entity at this position
 	isEntityAtPosition(position) {
 		for(const entity of this.entities)
 			if(entity.position == position)
@@ -39,6 +45,7 @@ class Level {
 		return false;
 	}
 
+	// Returns the Entity at this position
 	getEntityAtPosition(position) {
 		if(!this.isEntityAtPosition(position))
 			return null;
@@ -48,6 +55,7 @@ class Level {
 		return null;
 	}
 
+	// Returns all the Entities at this position
 	getEntitiesAtPosition(position) {
 		if(!this.isEntityAtPosition(position))
 			return null;
@@ -58,6 +66,7 @@ class Level {
 		return entities;
 	}
 
+	// Initialize all entities
 	init() {
 		this.tilemap.init(this);
 		for(var entity of this.entities)
@@ -66,11 +75,13 @@ class Level {
 			this.lightmap.init(this);
 	}
 
+	// Update all entities
 	update() {
 		this.tilemap.update(this);
 		for(var entity of this.entities)
 			entity.update(this);
 
+		// Filter out all entities that were destroyed
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
 				value.onDestroy();
@@ -78,11 +89,12 @@ class Level {
 		});
 	}
 
+	// Render all entities
 	render() {
 		this.tilemap.render(this);
 		for(const renderLayer of this.renderOrder) {
 			if(renderLayer == "lighting"
-			&& this.lightmap !== undefined)
+			&& this.lightmap !== undefined) // Manually render the lightmap at lighting layer
 				this.lightmap.render(this);
 			for(const entity of this.entities)
 				if(entity.renderer !== null
