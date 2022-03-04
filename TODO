@@ -17,7 +17,7 @@ that I might not want to add.
 
 
 Bugs list:
-	- sometimes HTML loads the main.js file before jscii.js and extras.js
+	- sometimes jscii.js calls init() before update()
 
 Main todo list:
 	- Github Wiki page
