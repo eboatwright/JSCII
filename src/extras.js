@@ -387,7 +387,7 @@ class PersonNameGenerator extends NameGenerator {
 // This is a class that handles *mostly* Entity management
 class Level {
 	// lightmap defaults to undefined, because some games might not have lighting
-	constructor(renderOrder = ["default", "lighting"], tilemap = new Tilemap(), lightmap = undefined) {
+	constructor(renderOrder = ["default", "lighting", "ui"], tilemap = new Tilemap(), lightmap = undefined) {
 		this.renderOrder = renderOrder;
 		this.tilemap = tilemap;
 		this.lightmap = lightmap;
