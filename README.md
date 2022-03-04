@@ -6,7 +6,8 @@
 # Usage
  Copy the jscii.js file into your directory, and load it into your HTML file!<br>
  If you want more "Game Engine"-ey type stuff, also put in the extras.js file :D<br>
- JSCII doesn't force you to use the Level, and Entity system. You can do *everything* however you want!
+ JSCII doesn't force you to use the Level, and Entity system. You can do *everything* however you want!<br>
+ Docs / Wiki / Tutorials: https://github.com/eboatwright/JSCII/wiki
 
 # Disclaimer
  Some things (mostly in the extras) are NOT finished, and will be worked on!<br>
