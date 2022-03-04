@@ -1,3 +1,4 @@
+// This just renders a little outline (sort-of) at the Entity's position. Useful for HUD
 class PanelRenderer extends Renderer {
 	constructor(entity, layer = "ui", size = vOne(), fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -9,6 +10,8 @@ class PanelRenderer extends Renderer {
 			for(var x = 0; x < this.size.x; x++) {
 				var char = SPACE;
 
+				// Render either a -, |, /, or \ depending on the positions
+				// (/ and \ for corners, and - and | for edges)
 				if(x == 0) {
 					char = LEFT_VERTICAL_LINE_3;
 					if(y == 0)
@@ -34,6 +37,7 @@ class PanelRenderer extends Renderer {
 	}
 }
 
+// Render a string of characters at the position
 class TextRenderer extends Renderer {
 	constructor(entity, layer = "ui", text = "", fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -45,6 +49,7 @@ class TextRenderer extends Renderer {
 	}
 }
 
+// Just an Entity for rendering text
 class Text extends Entity {
 	constructor(id = "text", position = vZero(), text = "", fgColor = WHITE, bgColor = BLACK, layer = "ui", tags = ["ui"]) {
 		super(id, position, tags);

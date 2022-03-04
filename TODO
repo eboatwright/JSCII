@@ -20,15 +20,11 @@ Bugs list:
 	- 
 
 Main todo list:
-	- 
+	- Github Wiki page
 
 Extras todo list:
 	- documentation / comments
 		- action.js
-		- nameGeneration.js
-		- PECS.js
-		- rect.js
-		- ui.js
 		- worldGeneration.js
 
 	- update action system

@@ -1,6 +1,7 @@
 // extras/PECS.js
 // PECS stands for Pseudo-ECS :)
 
+// Derive from this class to create your own Entity type
 class Entity {
 	constructor(id = "", position = vZero(), tags = []) {
 		this.id = id;
@@ -9,11 +10,13 @@ class Entity {
 		this.destroyed = false;
 	}
 
+	// A helper class for adding a tag if it doesn't have it already
 	addTag(tag) {
 		if(!this.hasTag(tag))
 			tags.push(tag);
 	}
 
+	// Filter out the tag specified
 	removeTag(tag) {
 		this.tags = this.tags.filter(function(value, index, array) {
 			return !value == tag;
@@ -24,20 +27,33 @@ class Entity {
 		return this.tags.includes(tag);
 	}
 
+	// A helper function for destroying an entity (Removing the Entity will be handled by Level)
 	destroy() {
 		this.destroyed = true;
 	}
 
-	init(level) {}
-	update(level) {}
-	render(level) {}
+	// Override these
+	init(level) {
+		throw new Error("Cannot init an empty Entity! You must extend this class");
+	}
+
+	update(level) {
+		throw new Error("Cannot update an empty Entity! You must extend this class");
+	}
+
+	render(level) {
+		throw new Error("Cannot render an empty Entity! You must extend this class");
+	}
 }
 
+// Derive from this class for your components
 class Component {
+	// Make sure to call this with super(entity)!
 	constructor(entity) {
 		this.entity = entity
 	}
 
+	// Override these
 	init(level) {
 		throw new Error("Cannot init an empty Component! You must extend this class");
 	}
@@ -51,7 +67,9 @@ class Component {
 	}
 }
 
+// A "middle man" class for making renderers
 class Renderer extends Component {
+	// The layer is used by Level for rendering order
 	constructor(entity, layer = "default", fgColor = WHITE, bgColor = BLACK) {
 		super(entity);
 		this.layer = layer;
@@ -59,11 +77,13 @@ class Renderer extends Component {
 		this.bgColor = bgColor;
 	}
 
+	// Throw an error if you try to render on an empty Renderer without extending
 	render(level) {
 		throw new Error("Cannot render an empty renderer! You must extend this class");
 	}
 }
 
+// Render a single char at the Entity's position
 class CharRenderer extends Renderer {
 	constructor(entity, layer = "default", char = QUESTION, fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -75,6 +95,7 @@ class CharRenderer extends Renderer {
 	}
 }
 
+// Render an array of chars at the Entity's position (Horizontal)
 class ArrayRenderer extends Renderer {
 	constructor(entity, layer = "default", array = [QUESTION], fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -86,6 +107,7 @@ class ArrayRenderer extends Renderer {
 	}
 }
 
+// Render a 2d array of characters at the Entity's position (It starts at the top left, and each array inside the 2d array is a row)
 class TwoDArrayRenderer extends Renderer {
 	constructor(entity, layer = "default", array = [[QUESTION]], fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -145,6 +167,7 @@ class MoveAction extends Action {
 }
 
 // extras/ui.js
+// This just renders a little outline (sort-of) at the Entity's position. Useful for HUD
 class PanelRenderer extends Renderer {
 	constructor(entity, layer = "ui", size = vOne(), fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -156,6 +179,8 @@ class PanelRenderer extends Renderer {
 			for(var x = 0; x < this.size.x; x++) {
 				var char = SPACE;
 
+				// Render either a -, |, /, or \ depending on the positions
+				// (/ and \ for corners, and - and | for edges)
 				if(x == 0) {
 					char = LEFT_VERTICAL_LINE_3;
 					if(y == 0)
@@ -181,6 +206,7 @@ class PanelRenderer extends Renderer {
 	}
 }
 
+// Render a string of characters at the position
 class TextRenderer extends Renderer {
 	constructor(entity, layer = "ui", text = "", fgColor = WHITE, bgColor = BLACK) {
 		super(entity, layer, fgColor, bgColor);
@@ -192,6 +218,7 @@ class TextRenderer extends Renderer {
 	}
 }
 
+// Just an Entity for rendering text
 class Text extends Entity {
 	constructor(id = "text", position = vZero(), text = "", fgColor = WHITE, bgColor = BLACK, layer = "ui", tags = ["ui"]) {
 		super(id, position, tags);
@@ -317,16 +344,22 @@ class DungeonGenerator extends WorldGenerator {
 }
 
 // extras/nameGeneration.js
+// This is a very simple section
+
+// Derive from this class to make your own name generator
 class NameGenerator {
 	constructor() {}
 
 	generate() {
+		// Throw an error if you try to use this class without deriving
 		throw new Error("cannot generate with empty NameGenerator You must extend this class");
 	}
 }
 
+// This class is just a *basic* name generator for generating person's names
 class PersonNameGenerator extends NameGenerator {
 	constructor(firstNames, firstHalfLastName, secondHalfLastName) {
+		// This super() call is required by JavaScript
 		super();
 		this.firstNames = firstNames;
 		this.firstHalfLastName = firstHalfLastName;
@@ -514,12 +547,14 @@ class Animator extends Component {
 }
 
 // extras/rect.js
+// Just a simple data class for rectangle collisions, and math
 class Rect {
 	constructor(position = vZero(), size = vOne()) {
 		this.position = position;
 		this.size = size;
 	}
 
+	// Return the center of the rect (You should probably round this for your tile based games)
 	center() {
 		return this.position.plus(this.size.multipliedBy(0.5));
 	}
@@ -529,6 +564,7 @@ class Rect {
 	left() { return this.position.x; }
 	right() { return this.position.x + this.size.x; }
 
+	// Simple AABB (Axis-aligned Bounding-box) overlap collisions
 	overlaps(other) {
 		return this.left() < other.right()
 			&& this.right() > other.left()
