@@ -23,6 +23,8 @@ Main todo list:
 	- Github Wiki page
 
 Extras todo list:
+	- namespacing / importing / exporting
+
 	- update action system
 		- kick
 		- open
@@ -31,9 +33,13 @@ Extras todo list:
 		- write comments
 
 	- particles
+
 	- items
+
 	- inventory
+
 	- spells
+	
 	- ai
 		- line of sight
 		- pathfinding
