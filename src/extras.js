@@ -114,11 +114,10 @@ class TwoDArrayRenderer extends Renderer {
 }
 
 // extras/action.js
-// This file won't have documentation / comments for a little while, because I'm still figuring
-// out how I want to structure it
-
+// Extend this class to create your own action
 class Action {
 	constructor(entity) {
+		// The entity to perform the action on
 		this.entity = entity;
 	}
 
@@ -127,6 +126,7 @@ class Action {
 	}
 }
 
+// This is for if your function returns an Action, but you don't want to call an "actual" Action, then return this
 class NoAction extends Action {
 	constructor() {
 		super(null);
@@ -135,7 +135,9 @@ class NoAction extends Action {
 	perform() {}
 }
 
+// This is a very basic class for moving / collision
 class MoveAction extends Action {
+	// The Entity to move, the level and the direction to move
 	constructor(entity, level, direction = vZero()) {
 		super(entity);
 		this.level = level;
@@ -143,9 +145,12 @@ class MoveAction extends Action {
 	}
 
 	perform() {
+		// Move the entity
 		this.entity.position.add(this.direction);
 
+		// Check if there's a solid tile in the way
 		if(this.level.tilemap.getTile(this.entity.position.x, this.entity.position.y).tags.includes("solid"))
+			// Move back out of the tile
 			this.entity.position.subtract(this.direction);
 	}
 }
@@ -475,13 +480,17 @@ class Level {
 		this.tilemap.render(this);
 		for(const renderLayer of this.renderOrder) {
 			if(renderLayer == "lighting"
-			&& this.lightmap !== undefined) // Manually render the lightmap at lighting layer
+			&& this.lightmap !== undefined) { // Manually render the lightmap at lighting layer
 				this.lightmap.render(this);
-			for(const entity of this.entities)
-				if(entity.renderer !== null
-				&& entity.renderer !== undefined
-				&& entity.renderer.layer == renderLayer)
+			}
+			for(const entity of this.entities) { // I know that this could be made into less lines, but it's more readable ;)
+				if(entity.renderer === null
+				|| entity.renderer === undefined) {
 					entity.render(this);
+				} else if(entity.renderer.layer == renderLayer) {
+					entity.render(this);
+				}
+			}
 		}
 	}
 }
@@ -547,6 +556,7 @@ class Animator extends Component {
 }
 
 // extras/stats.js
+// Basically just keeps track of a number, and gives functions for changing it
 class Stat extends Component {
 	constructor(entity, minValue = 0, startValue = 4, maxValue = 4) {
 		super(entity);
@@ -556,10 +566,12 @@ class Stat extends Component {
 	}
 
 	clamp() {
+		// Clamp the value (inclusive)
 		this.value = clamp(this.minValue, this.value, this.maxValue);
 	}
 
 	add(amount) {
+		// Add amount to value and clamp it
 		this.value += amount;
 		this.clamp();
 	}
@@ -570,20 +582,26 @@ class Stat extends Component {
 	}
 }
 
+// A basic component for keeping track of health
 class HealthStat extends Stat {
 	constructor(entity, minValue = 0, startValue = 4, maxValue = 4) {
 		super(entity, minValue, startValue, maxValue);
 	}
 
+	// Heal the Entity
 	heal(amount) {
 		this.add(amount);
 	}
 
+	// Damage the Entity
 	damage(amount) {
+		// This function damages the Entity, then returns if the Entity went to down minValue
 		this.subtract(amount);
+		return this.value <= this.minValue;
 	}
 }
 
+// A basic component for keeping track of Magic (or Mana)
 class MagicStat extends Stat {
 	constructor(entity, minValue = 0, startValue = 4, maxValue = 4) {
 		super(entity, minValue, startValue, maxValue);
@@ -594,6 +612,9 @@ class MagicStat extends Stat {
 	}
 
 	use(amount) {
+		// Let's say, that this function is called whenever the player uses a spell.
+		// So, you pass the spell cost into this function, and if the Entity has enough
+		// magic to use the spell, it returns true, else returns false
 		if(this.value - amount < this.minValue)
 			return false;
 		this.subtract(amount);

@@ -43,12 +43,15 @@ class Player extends Entity {
 	constructor(position = vZero()) {
 		super("player", position, ["player"]);
 		this.playerController = new PlayerController(this);
+		this.health = new HealthStat(this);
 		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
 		this.moveTimer = 0;
 	}
 
 	update(level) {
 		this.playerController.update(level);
+		var hud = level.getEntityById("hud");
+		hud.renderer.text = `HP: ${this.health.value}`;
 	}
 
 	render(level) {
@@ -87,7 +90,7 @@ init = function() {
 	level.addEntity(new Player(playerPosition));
 
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
-	level.addEntity(new Text("text", vector2(1, 1), "HP: 3 | MP: 3", WHITE, BLACK));
+	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
 
 	level.init();
 

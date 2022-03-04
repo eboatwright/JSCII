@@ -94,13 +94,17 @@ class Level {
 		this.tilemap.render(this);
 		for(const renderLayer of this.renderOrder) {
 			if(renderLayer == "lighting"
-			&& this.lightmap !== undefined) // Manually render the lightmap at lighting layer
+			&& this.lightmap !== undefined) { // Manually render the lightmap at lighting layer
 				this.lightmap.render(this);
-			for(const entity of this.entities)
-				if(entity.renderer !== null
-				&& entity.renderer !== undefined
-				&& entity.renderer.layer == renderLayer)
+			}
+			for(const entity of this.entities) { // I know that this could be made into less lines, but it's more readable ;)
+				if(entity.renderer === null
+				|| entity.renderer === undefined) {
 					entity.render(this);
+				} else if(entity.renderer.layer == renderLayer) {
+					entity.render(this);
+				}
+			}
 		}
 	}
 }
