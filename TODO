@@ -17,7 +17,7 @@ that I might not want to add.
 
 
 Bugs list:
-	- sometimes jscii.js calls init() before update()
+	- 
 
 Main todo list:
 	- Github Wiki page
@@ -25,12 +25,9 @@ Main todo list:
 Extras todo list:
 	- namespacing / importing / exporting
 
-	- update action system
-		- kick
-		- open
-		- close
-		- throw
-		- write comments
+	- documentation
+		- action.js
+		- stats.js
 
 	- particles
 

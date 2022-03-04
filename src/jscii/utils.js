@@ -51,3 +51,8 @@ function init2DArray(width, height, value = 0) {
 		result.push(initArray(width, value));
 	return result;
 }
+
+// Clamp a number between a range (inclusive)
+function clamp(min, value, max) {
+	return Math.min(Math.max(value, min), max);
+}

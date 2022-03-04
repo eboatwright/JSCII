@@ -120,7 +120,6 @@ class TwoDArrayRenderer extends Renderer {
 class Action {
 	constructor(entity) {
 		this.entity = entity;
-		this.performed = false;
 	}
 
 	perform() {
@@ -133,11 +132,7 @@ class NoAction extends Action {
 		super(null);
 	}
 
-	perform() {
-		if(this.performed)
-			throw new Error("Cannot call same Action object twice");
-		this.performed = true;
-	}
+	perform() {}
 }
 
 class MoveAction extends Action {
@@ -148,14 +143,10 @@ class MoveAction extends Action {
 	}
 
 	perform() {
-		if(this.performed)
-			throw new Error("Cannot call same Action object twice");
 		this.entity.position.add(this.direction);
 
 		if(this.level.tilemap.getTile(this.entity.position.x, this.entity.position.y).tags.includes("solid"))
 			this.entity.position.subtract(this.direction);
-
-		this.performed = true;
 	}
 }
 
@@ -552,6 +543,61 @@ class Animator extends Component {
 	getFrame() {
 		// Return the current character that should be rendered
 		return this.animations[this.currentAnimation].frames[this.currentFrameIndex];
+	}
+}
+
+// extras/stats.js
+class Stat extends Component {
+	constructor(entity, minValue = 0, startValue = 4, maxValue = 4) {
+		super(entity);
+		this.minValue = minValue;
+		this.value = startValue;
+		this.maxValue = maxValue;
+	}
+
+	clamp() {
+		this.value = clamp(this.minValue, this.value, this.maxValue);
+	}
+
+	add(amount) {
+		this.value += amount;
+		this.clamp();
+	}
+
+	subtract(amount) {
+		this.value -= amount;
+		this.clamp();
+	}
+}
+
+class HealthStat extends Stat {
+	constructor(entity, minValue = 0, startValue = 4, maxValue = 4) {
+		super(entity, minValue, startValue, maxValue);
+	}
+
+	heal(amount) {
+		this.add(amount);
+	}
+
+	damage(amount) {
+		this.subtract(amount);
+	}
+}
+
+class MagicStat extends Stat {
+	constructor(entity, minValue = 0, startValue = 4, maxValue = 4) {
+		super(entity, minValue, startValue, maxValue);
+	}
+
+	give(amount) {
+		this.add(amount);
+	}
+
+	use(amount) {
+		if(this.value - amount < this.minValue)
+			return false;
+		this.subtract(amount);
+		return true;
 	}
 }
 

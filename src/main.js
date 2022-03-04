@@ -90,6 +90,8 @@ init = function() {
 	level.addEntity(new Text("text", vector2(1, 1), "HP: 3 | MP: 3", WHITE, BLACK));
 
 	level.init();
+
+	return true;
 }
 
 update = function() {

@@ -29,12 +29,6 @@ function update() {}
 function render() {}
 
 function backendUpdate() {
-	// Call the initialize function if it hasn't been called yet
-	if(!initialized) {
-		init();
-		initialized = true;
-	}
-
 	update();
 	// Update the keys *after* the update function
 	updateKeys();
@@ -52,8 +46,11 @@ function backendTick() {
 	//		deltaTime will equal 1
 	deltaTime = (new Date().getTime() - lastFrame) / 60;
 
-	backendUpdate();
-	backendRender();
+	if(initialized) {
+		backendUpdate();
+		backendRender();
+	} else
+		initialized = init();
 
 	// For delta time calculation
 	lastFrame = new Date().getTime();
