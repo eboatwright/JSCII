@@ -56,17 +56,6 @@ class Player extends Entity {
 	}
 }
 
-class HUD extends Entity {
-	constructor(position = vZero()) {
-		super("hud", position, ["hud"]);
-		this.renderer = new PanelRenderer(this, "ui", vector2(51, 8), WHITE, BLACK);
-	}
-
-	render(level) {
-		this.renderer.render(level);
-	}
-}
-
 class Seperator extends Entity {
 	constructor(position = vZero(), fgColor = WHITE) {
 		super("seperator", position, ["seperator", "hud"]);
