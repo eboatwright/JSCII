@@ -1,11 +1,11 @@
 // This is a very simple section
 
-// Derive from this class to make your own name generator
+// Extend from this class to make your own name generator
 class NameGenerator {
 	constructor() {}
 
 	generate() {
-		// Throw an error if you try to use this class without deriving
+		// Throw an error if you try to use this class without extending
 		throw new Error("cannot generate with empty NameGenerator You must extend this class");
 	}
 }

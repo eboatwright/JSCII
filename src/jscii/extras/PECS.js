@@ -1,6 +1,6 @@
 // PECS stands for Pseudo-ECS :)
 
-// Derive from this class to create your own Entity type
+// Extend from this class to create your own Entity type
 class Entity {
 	constructor(id = "", position = vZero(), tags = []) {
 		this.id = id;
@@ -32,20 +32,13 @@ class Entity {
 	}
 
 	// Override these
-	init(level) {
-		throw new Error("Cannot init an empty Entity! You must extend this class");
-	}
-
-	update(level) {
-		throw new Error("Cannot update an empty Entity! You must extend this class");
-	}
-
-	render(level) {
-		throw new Error("Cannot render an empty Entity! You must extend this class");
-	}
+	// These don't throw errors, because not every Entity needs *all* the functions
+	init(level) {}
+	update(level) {}
+	render(level) {}
 }
 
-// Derive from this class for your components
+// Extend from this class for your components
 class Component {
 	// Make sure to call this with super(entity)!
 	constructor(entity) {

@@ -23,15 +23,12 @@ Main todo list:
 	- Github Wiki page
 
 Extras todo list:
-	- documentation / comments
-		- action.js
-		- worldGeneration.js
-
 	- update action system
 		- kick
 		- open
 		- close
 		- throw
+		- write comments
 
 	- particles
 	- items
