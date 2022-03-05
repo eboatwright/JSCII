@@ -37,6 +37,7 @@ class Entity {
 	init(level) {}
 	update(level) {}
 	render(level) {}
+	onDestroy(level) {}
 }
 
 // Extend from this class for your components
@@ -426,7 +427,8 @@ class Level {
 	// Check if there is an Entity at this position
 	isEntityAtPosition(position) {
 		for(const entity of this.entities)
-			if(entity.position == position)
+			if(entity.position.x == position.x
+			&& entity.position.y == position.y)
 				return true;
 		return false;
 	}
@@ -436,7 +438,8 @@ class Level {
 		if(!this.isEntityAtPosition(position))
 			return null;
 		for(const entity of this.entities)
-			if(entity.position == position)
+			if(entity.position.x == position.x
+			&& entity.position.y == position.y)
 				return entity;
 		return null;
 	}
@@ -444,10 +447,11 @@ class Level {
 	// Returns all the Entities at this position
 	getEntitiesAtPosition(position) {
 		if(!this.isEntityAtPosition(position))
-			return null;
+			return [];
 		var entities = [];
 		for(const entity of this.entities)
-			if(entity.position == position)
+			if(entity.position.x == position.x
+			&& entity.position.y == position.y)
 				entities.push(entity);
 		return entities;
 	}
@@ -470,7 +474,7 @@ class Level {
 		// Filter out all entities that were destroyed
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
-				value.onDestroy();
+				value.onDestroy(this);
 			return !value.destroyed;
 		});
 	}
@@ -665,7 +669,7 @@ class Tile {
 }
 
 // Extend this class to make your own map rendering
-class Map extends Entity {
+class GameMap extends Entity {
 	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, position, tags);
 		this.tiles = tiles;
@@ -673,12 +677,12 @@ class Map extends Entity {
 	}
 
 	render(level) {
-		// Throw an error, if you try to render on an empty Map
-		throw new Error("cannot render 'Map' You must extend this class");
+		// Throw an error, if you try to render on an empty GameMap
+		throw new Error("cannot render 'GameMap' You must extend this class");
 	}
 }
 
-class Tilemap extends Map {
+class Tilemap extends GameMap {
 	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
 		this.tileset = tileset;
@@ -710,7 +714,7 @@ class Tilemap extends Map {
 	}
 }
 
-class Lightmap extends Map {
+class Lightmap extends GameMap {
 	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
 	}
@@ -758,6 +762,56 @@ class Lightmap extends Map {
 			for(var x = 0; x < this.tiles[y].length; x++)
 				if(this.tiles[y][x] == 1)
 					FONT.renderChar(SPACE, x, y, BLACK, BLACK);
+	}
+}
+
+// extras/inventory.js
+// TODO: under construction! DON'T USE!!
+// TODO: document me!
+
+class Item extends Entity {
+	constructor(id = "item", position = vZero(), name = "?", charRenderer = undefined, tags = ["item"]) {
+		super(id, position, tags);
+		this.name = name;
+		this.renderer = charRenderer;
+		this.renderer.entity = this;
+		if(charRenderer === undefined)
+			this.renderer = new CharRenderer(this);
+	}
+
+	update(level) {
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
+class Inventory extends Component {
+	constructor(entity) {
+		super(entity);
+		this.inventory = new Map();
+	}
+
+	hasItem(itemName) {
+		return this.inventory.has(itemName);
+	}
+
+	pickup(itemEntity) {
+		if(itemEntity.destoryed)
+			return;
+
+		if(this.hasItem(itemEntity.name))
+			this.inventory.set(itemEntity.name, this.inventory.get(itemEntity.name) + 1);
+		else
+			this.inventory.set(itemEntity.name, 1);
+
+		itemEntity.destroy();
+	}
+
+	get() {
+		// TODO: format to text
+		return this.inventory;
 	}
 }
 

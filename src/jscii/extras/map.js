@@ -13,7 +13,7 @@ class Tile {
 }
 
 // Extend this class to make your own map rendering
-class Map extends Entity {
+class GameMap extends Entity {
 	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, position, tags);
 		this.tiles = tiles;
@@ -21,12 +21,12 @@ class Map extends Entity {
 	}
 
 	render(level) {
-		// Throw an error, if you try to render on an empty Map
-		throw new Error("cannot render 'Map' You must extend this class");
+		// Throw an error, if you try to render on an empty GameMap
+		throw new Error("cannot render 'GameMap' You must extend this class");
 	}
 }
 
-class Tilemap extends Map {
+class Tilemap extends GameMap {
 	constructor(id = "", tileset = [], tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
 		this.tileset = tileset;
@@ -58,7 +58,7 @@ class Tilemap extends Map {
 	}
 }
 
-class Lightmap extends Map {
+class Lightmap extends GameMap {
 	constructor(id = "", tiles = [], tileSize = 8, tags = [], position = vZero()) {
 		super(id, tiles, tileSize, tags, position);
 	}

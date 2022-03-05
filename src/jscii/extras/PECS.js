@@ -36,6 +36,7 @@ class Entity {
 	init(level) {}
 	update(level) {}
 	render(level) {}
+	onDestroy(level) {}
 }
 
 // Extend from this class for your components

@@ -40,7 +40,8 @@ class Level {
 	// Check if there is an Entity at this position
 	isEntityAtPosition(position) {
 		for(const entity of this.entities)
-			if(entity.position == position)
+			if(entity.position.x == position.x
+			&& entity.position.y == position.y)
 				return true;
 		return false;
 	}
@@ -50,7 +51,8 @@ class Level {
 		if(!this.isEntityAtPosition(position))
 			return null;
 		for(const entity of this.entities)
-			if(entity.position == position)
+			if(entity.position.x == position.x
+			&& entity.position.y == position.y)
 				return entity;
 		return null;
 	}
@@ -58,10 +60,11 @@ class Level {
 	// Returns all the Entities at this position
 	getEntitiesAtPosition(position) {
 		if(!this.isEntityAtPosition(position))
-			return null;
+			return [];
 		var entities = [];
 		for(const entity of this.entities)
-			if(entity.position == position)
+			if(entity.position.x == position.x
+			&& entity.position.y == position.y)
 				entities.push(entity);
 		return entities;
 	}
@@ -84,7 +87,7 @@ class Level {
 		// Filter out all entities that were destroyed
 		this.entities = this.entities.filter(function(value, index, array) {
 			if(value.destroyed)
-				value.onDestroy();
+				value.onDestroy(this);
 			return !value.destroyed;
 		});
 	}

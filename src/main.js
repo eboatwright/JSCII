@@ -36,20 +36,29 @@ class PlayerController extends Component {
 			}
 		} else
 			this.moveTimer = 0;
+
+		if(keyJustDown(".")) {
+			for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
+				if(entity.hasTag("item")) {
+					this.entity.inventory.pickup(entity);
+				}
+			}
+		}
 	}
 }
 
 class Player extends Entity {
 	constructor(position = vZero()) {
 		super("player", position, ["player"]);
-		this.playerController = new PlayerController(this);
+		this.controller = new PlayerController(this);
+		this.inventory = new Inventory(this);
 		this.health = new HealthStat(this);
 		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
 		this.moveTimer = 0;
 	}
 
 	update(level) {
-		this.playerController.update(level);
+		this.controller.update(level);
 		var hud = level.getEntityById("hud");
 		hud.renderer.text = `HP: ${this.health.value}`;
 	}
@@ -82,12 +91,13 @@ init = function() {
 	const playerPosition = dungeonGenerator.generate();
 
 	level = new Level(
-		["default", "lighting", "ui"],
+		["item", "default", "lighting", "ui"],
 		tilemap,
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
 
 	level.addEntity(new Player(playerPosition));
+	level.addEntity(new Item("item", playerPosition.minus(2), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
 
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
 	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
