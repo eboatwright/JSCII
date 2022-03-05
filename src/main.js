@@ -48,6 +48,39 @@ class PlayerController extends Component {
 	}
 }
 
+class InventoryPanel extends Panel {
+	constructor() {
+		super("inventoryPanel", vector2(36, 4), vector2(16, 25), LIGHT_GRAY, BLACK, "ui", ["ui"]);
+		this.textRenderer = new TextRenderer(this, "ui", "inventory", WHITE, BLACK);
+	}
+
+	update(level) {
+		this.textRenderer.text = "INVENTORY:\n" + level.getEntityById("player").inventory.get();
+	}
+
+	render(level) {
+		this.renderer.render(level);
+		this.textRenderer.render(level);
+	}
+}
+
+class UIManager extends Entity {
+	constructor() {
+		super("uiManager", vZero(), ["uiManager"]);
+		this.inventory = undefined;
+	}
+
+	update(level) {
+		if(keyJustDown("i") && this.inventory === undefined)
+			this.inventory = level.addEntity(new InventoryPanel());
+
+		if(keyJustDown("Escape")) {
+			this.inventory.destroy();
+			this.inventory = undefined;
+		}
+	}
+}
+
 class Player extends Entity {
 	constructor(position = vZero()) {
 		super("player", position, ["player"]);
@@ -99,12 +132,15 @@ init = function() {
 
 	level.addEntity(new Player(playerPosition));
 	level.addEntity(new Item("item", playerPosition.minus(2), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
+	level.addEntity(new Item("item", playerPosition.minus(3), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
 
 	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
 
 	level.addEntity(new Seperator(vector2(0, 30), LIGHT_GRAY));
 	level.addEntity(new Text("log", vector2(1, 32), "WELCOME!", WHITE, BLACK));
+
+	level.addEntity(new UIManager());
 
 	level.init();
 

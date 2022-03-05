@@ -37,6 +37,18 @@ class PanelRenderer extends Renderer {
 	}
 }
 
+// Simple entity that just renders a panel
+class Panel extends Entity {
+	constructor(id = "panel", position = vZero(), size = vOne(), fgColor = WHITE, bgColor = BLACK, layer = "ui", tags = ["ui"]) {
+		super(id, position, tags);
+		this.renderer = new PanelRenderer(this, layer, size, fgColor, bgColor);
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
 // Render a string of characters at the position
 class TextRenderer extends Renderer {
 	constructor(entity, layer = "ui", text = "", fgColor = WHITE, bgColor = BLACK) {

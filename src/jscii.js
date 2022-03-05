@@ -357,8 +357,20 @@ class Font {
 	// Render a sequence of characters
 	renderText(text, x, y, fgColor, bgColor) {
 		text = text.toUpperCase();
-		for(var i = 0; i < text.length; i++)
-			this.renderChar(text[i], x + i, y, fgColor, bgColor);
+
+		// Keep track of the x and y offsets
+		var xOff = 0;
+		var yOff = 0;
+		for(var i = 0; i < text.length; i++) {
+			if(text[i] == "\n") {
+				// Reset the x offset and go to the next line
+				yOff += 1;
+				xOff = 0;
+			} else {
+				this.renderChar(text[i], x + xOff, y + yOff, fgColor, bgColor);
+				xOff += 1;
+			}
+		}
 	}
 
 	// This is for rendering alot of characters, that *can't* be conveyed with regular text.

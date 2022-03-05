@@ -10,6 +10,7 @@ class Level {
 
 	addEntity(entity) {
 		this.entities.push(entity);
+		return entity;
 	}
 
 	// Returns the first Entity it finds with that ID

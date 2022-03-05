@@ -197,6 +197,18 @@ class PanelRenderer extends Renderer {
 	}
 }
 
+// Simple entity that just renders a panel
+class Panel extends Entity {
+	constructor(id = "panel", position = vZero(), size = vOne(), fgColor = WHITE, bgColor = BLACK, layer = "ui", tags = ["ui"]) {
+		super(id, position, tags);
+		this.renderer = new PanelRenderer(this, layer, size, fgColor, bgColor);
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
 // Render a string of characters at the position
 class TextRenderer extends Renderer {
 	constructor(entity, layer = "ui", text = "", fgColor = WHITE, bgColor = BLACK) {
@@ -398,6 +410,7 @@ class Level {
 
 	addEntity(entity) {
 		this.entities.push(entity);
+		return entity;
 	}
 
 	// Returns the first Entity it finds with that ID
@@ -788,14 +801,31 @@ class Item extends Entity {
 	}
 }
 
+class ItemSlot {
+	constructor(item, amount) {
+		this.item = item;
+		this.amount = amount;
+	}
+}
+
 class Inventory extends Component {
 	constructor(entity) {
 		super(entity);
-		this.inventory = new Map();
+		this.inventory = [];
 	}
 
 	hasItem(itemName) {
-		return this.inventory.has(itemName);
+		for(const item of this.inventory)
+			if(item.item.name == itemName)
+				return true;
+		return false;
+	}
+
+	getItemIndex(itemName) {
+		for(var i = 0; i < this.inventory.length; i++)
+			if(this.inventory[i].item.name == itemName)
+				return i;
+		return -1;
 	}
 
 	pickup(itemEntity) {
@@ -803,18 +833,32 @@ class Inventory extends Component {
 			return;
 
 		if(this.hasItem(itemEntity.name))
-			this.inventory.set(itemEntity.name, this.inventory.get(itemEntity.name) + 1);
+			this.inventory[this.getItemIndex(itemEntity.name)].amount += 1;
 		else
-			this.inventory.set(itemEntity.name, 1);
+			this.inventory.push(new ItemSlot(itemEntity, 1));
 
 		itemEntity.destroy();
 	}
 
+	drop(itemName) {
+		if(!this.hasItem(itemName))
+			return null;
+
+		const index = this.getItemIndex(itemName);
+		this.inventory[index].amount -= 1;
+		if(this.inventory[index] <= 0)
+			this.inventory.splice(index, 1);
+
+		var item = this.inventory[index];
+		item.destroyed = false;
+		return item;
+	}
+
 	get() {
 		var result = "";
-		for(const data of this.inventory) {
-			result += `${data[1]} ${data[0]}`;
-			if(data[1] > 1)
+		for(const slot of this.inventory) {
+			result += `${slot.amount} ${slot.item.name}`;
+			if(slot.amount > 1)
 				result += "S";
 			result += "\n";
 		}
