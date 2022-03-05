@@ -40,8 +40,11 @@ class PlayerController extends Component {
 		if(keyJustDown(".")) {
 			for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
 				if(entity.hasTag("item")) {
-					this.entity.inventory.pickup(entity);
-					level.getEntityById("log").renderer.text = `PICKED UP ${entity.name}`;
+					var result = this.entity.inventory.pickup(entity);
+					if(result == "full")
+						level.getEntityById("log").renderer.text = "FULL INVENTORY";
+					else
+						level.getEntityById("log").renderer.text = `PICKED UP ${entity.name}`;
 				}
 			}
 		}
@@ -87,7 +90,7 @@ class Player extends Entity {
 	constructor(position = vZero()) {
 		super("player", position, ["player"]);
 		this.controller = new PlayerController(this);
-		this.inventory = new Inventory(this);
+		this.inventory = new Inventory(this, 23);
 		this.health = new HealthStat(this);
 		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
 		this.moveTimer = 0;
@@ -133,7 +136,7 @@ init = function() {
 	);
 
 	level.addEntity(new Player(playerPosition));
-	level.addEntity(new Item("item", playerPosition.minus(2), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
+	level.addEntity(new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK)));
 
 	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));

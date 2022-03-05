@@ -1,13 +1,12 @@
-// TODO: under construction! DON'T USE!!
-// TODO: document me!
-
+// An Entity that holds everything you need to know about an item (at the moment ;))
 class Item extends Entity {
+	// The name, is what shows up in the inventory screen
 	constructor(id = "item", position = vZero(), name = "?", charRenderer = undefined, tags = ["item"]) {
 		super(id, position, tags);
 		this.name = name;
 		this.renderer = charRenderer;
 		this.renderer.entity = this;
-		if(charRenderer === undefined)
+		if(charRenderer === undefined) // If no charRenderer as defined, make a default one
 			this.renderer = new CharRenderer(this);
 	}
 
@@ -19,6 +18,7 @@ class Item extends Entity {
 	}
 }
 
+// A very simple data class for holding an item Entity, and how many the player has
 class ItemSlot {
 	constructor(item, amount) {
 		this.item = item;
@@ -27,8 +27,9 @@ class ItemSlot {
 }
 
 class Inventory extends Component {
-	constructor(entity) {
+	constructor(entity, maxItemSlots = 10) {
 		super(entity);
+		this.maxItemSlots = maxItemSlots;
 		this.inventory = [];
 	}
 
@@ -39,6 +40,7 @@ class Inventory extends Component {
 		return false;
 	}
 
+	// Returns the index of the item with the name specified, returns -1 if not found
 	getItemIndex(itemName) {
 		for(var i = 0; i < this.inventory.length; i++)
 			if(this.inventory[i].item.name == itemName)
@@ -46,18 +48,23 @@ class Inventory extends Component {
 		return -1;
 	}
 
+	// Pickup an Item Entity
 	pickup(itemEntity) {
 		if(itemEntity.destoryed)
 			return;
 
 		if(this.hasItem(itemEntity.name))
 			this.inventory[this.getItemIndex(itemEntity.name)].amount += 1;
-		else
+		else {
+			if(this.inventory.length >= this.maxItemSlots)
+				return "full";
 			this.inventory.push(new ItemSlot(itemEntity, 1));
+		}
 
 		itemEntity.destroy();
 	}
 
+	// Drop the item, and return the Item Entity
 	drop(itemName) {
 		if(!this.hasItem(itemName))
 			return null;
@@ -74,6 +81,7 @@ class Inventory extends Component {
 		return item;
 	}
 
+	// Basically a format() function for the Inventory
 	get() {
 		var result = "";
 		for(const slot of this.inventory) {
