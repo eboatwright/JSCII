@@ -71,12 +71,14 @@ class UIManager extends Entity {
 	}
 
 	update(level) {
-		if(keyJustDown("i") && this.inventory === undefined)
-			this.inventory = level.addEntity(new InventoryPanel());
-
-		if(keyJustDown("Escape")) {
-			this.inventory.destroy();
-			this.inventory = undefined;
+		if(this.inventory == undefined) {
+			if(keyJustDown("i"))
+				this.inventory = level.addEntity(new InventoryPanel());
+		} else {
+			if(keyJustDown("Escape")) {
+				this.inventory.destroy();
+				this.inventory = undefined;
+			}
 		}
 	}
 }
@@ -132,7 +134,6 @@ init = function() {
 
 	level.addEntity(new Player(playerPosition));
 	level.addEntity(new Item("item", playerPosition.minus(2), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
-	level.addEntity(new Item("item", playerPosition.minus(3), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
 
 	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));

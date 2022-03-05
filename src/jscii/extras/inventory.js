@@ -64,11 +64,13 @@ class Inventory extends Component {
 
 		const index = this.getItemIndex(itemName);
 		this.inventory[index].amount -= 1;
-		if(this.inventory[index] <= 0)
+
+		var item = this.inventory[index].item;
+		item.destroyed = false;
+
+		if(this.inventory[index].amount <= 0)
 			this.inventory.splice(index, 1);
 
-		var item = this.inventory[index];
-		item.destroyed = false;
 		return item;
 	}
 
