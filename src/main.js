@@ -104,7 +104,7 @@ init = function() {
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
 
 	level.addEntity(new Seperator(vector2(0, 30), LIGHT_GRAY));
-	level.addEntity(new Text("log", vector2(1, 32), "PLACEHOLDER", WHITE, BLACK));
+	level.addEntity(new Text("log", vector2(1, 32), "WELCOME!", WHITE, BLACK));
 
 	level.init();
 

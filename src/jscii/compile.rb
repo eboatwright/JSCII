@@ -12,9 +12,9 @@ def main
 
 	extras_file = File.open "../extras.js", "w+"
 	extras_files = Dir.glob "./extras/*.js"
-	write_file "./extras/PECS.js", extras_file
+	write_file "./extras/entity.js", extras_file
 	extras_files.each { |file_path|
-		if !file_path.include? "PECS.js"
+		if !file_path.include? "entity.js"
 			write_file file_path, extras_file
 		end
 	}
