@@ -41,6 +41,7 @@ class PlayerController extends Component {
 			for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
 				if(entity.hasTag("item")) {
 					this.entity.inventory.pickup(entity);
+					level.getEntityById("log").renderer.text = `PICKED UP ${entity.name}`;
 				}
 			}
 		}
@@ -86,7 +87,7 @@ init = function() {
 		init2DArray(WIDTH_TILE, HEIGHT_TILE)
 	);
 
-	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 50, [1, 2], 3, 4, vector2(1, 4), vector2(0, 0));
+	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2));
 
 	const playerPosition = dungeonGenerator.generate();
 
@@ -99,8 +100,11 @@ init = function() {
 	level.addEntity(new Player(playerPosition));
 	level.addEntity(new Item("item", playerPosition.minus(2), "ICE STAFF", new CharRenderer(null, "item", FWD_SLASH, LIGHT_BLUE, BLACK)));
 
-	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
 	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
+	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
+
+	level.addEntity(new Seperator(vector2(0, 30), LIGHT_GRAY));
+	level.addEntity(new Text("log", vector2(1, 32), "PLACEHOLDER", WHITE, BLACK));
 
 	level.init();
 

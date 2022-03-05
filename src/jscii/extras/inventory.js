@@ -42,7 +42,13 @@ class Inventory extends Component {
 	}
 
 	get() {
-		// TODO: format to text
-		return this.inventory;
+		var result = "";
+		for(const data of this.inventory) {
+			result += `${data[1]} ${data[0]}`;
+			if(data[1] > 1)
+				result += "S";
+			result += "\n";
+		}
+		return result;
 	}
 }
