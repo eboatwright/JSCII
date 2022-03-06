@@ -13,6 +13,57 @@ var dungeonGenerator;
 var testText;
 var level;
 
+class PickupAction extends Action {
+	constructor(entity, level) {
+		super(entity);
+		this.level = level;
+	}
+
+	perform() {
+		for(var entity of this.level.getEntitiesAtPosition(this.entity.position)) {
+			if(entity.hasTag("item")) {
+				var result = this.entity.inventory.pickup(entity);
+				if(result == "full")
+					this.level.getEntityById("log").renderer.text = "FULL INVENTORY";
+				else
+					this.level.getEntityById("log").renderer.text = `PICKED UP ${entity.name}`;
+			}
+		}
+	}
+}
+
+class OpenAction extends Action {
+	constructor(entity, level, position) {
+		super(entity);
+		this.level = level;
+		this.position = position;
+	}
+
+	perform() {
+		for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
+			if(entity.hasTag("openable")) {
+				if(entity.hasTag("chest")) {
+					this.level.getEntityById("log").renderer.text = "OPENED CHEST";
+					this.level.addEntity(entity.item);
+					entity.destroy();
+				}
+			}
+		}
+	}
+}
+
+class Chest extends Entity {
+	constructor(position = vZero(), item) {
+		super("chest", position, ["openable", "chest"]);
+		this.renderer = new CharRenderer(this, "default", BOTTOM_HALF, MID_BROWN, BLACK);
+		this.item = item;
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
 class PlayerController extends Component {
 	constructor(entity) { super(entity); }
 
@@ -37,62 +88,11 @@ class PlayerController extends Component {
 		} else
 			this.moveTimer = 0;
 
-		if(keyJustDown(".")) {
-			for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
-				if(entity.hasTag("item")) {
-					var result = this.entity.inventory.pickup(entity);
-					if(result == "full")
-						level.getEntityById("log").renderer.text = "FULL INVENTORY";
-					else
-						level.getEntityById("log").renderer.text = `PICKED UP ${entity.name}`;
-				}
-			}
-		}
+		if(keyJustDown("."))
+			new PickupAction(this.entity, level).perform();
 
-		if(keyJustDown("o")) {
-			for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
-				if(entity.hasTag("chest")) {
-					level.getEntityById("log").renderer.text = "OPENED CHEST";
-					level.addEntity(entity.item);
-					entity.destroy();
-				}
-			}
-		}
-	}
-}
-
-class InventoryPanel extends Panel {
-	constructor() {
-		super("inventoryPanel", vector2(33, 4), vector2(19, 25), LIGHT_GRAY, BLACK, "ui", ["ui"]);
-		this.textRenderer = new TextRenderer(this, "ui", "inventory", WHITE, BLACK);
-	}
-
-	update(level) {
-		this.textRenderer.text = "INVENTORY:\n" + level.getEntityById("player").inventory.getMarked();
-	}
-
-	render(level) {
-		this.renderer.render(level);
-		this.textRenderer.render(level);
-	}
-}
-
-class UIManager extends Entity {
-	constructor() {
-		super("uiManager", vZero(), ["uiManager"]);
-		this.inventory = undefined;
-	}
-
-	update(level) {
-		if(this.inventory == undefined) {
-			if(keyJustDown("i"))
-				this.inventory = level.addEntity(new InventoryPanel());
-		} else {
-			if(keyJustDown("Escape")) {
-				this.inventory.destroy();
-				this.inventory = undefined;
-			}
-		}
+		if(keyJustDown("o"))
+			new OpenAction(this.entity, level).perform();
 	}
 }
 
@@ -117,15 +117,19 @@ class Player extends Entity {
 	}
 }
 
-class Chest extends Entity {
-	constructor(position = vZero(), item) {
-		super("chest", position, ["chest"]);
-		this.renderer = new CharRenderer(this, "default", BOTTOM_HALF, MID_BROWN, BLACK);
-		this.item = item;
+class InventoryPanel extends Panel {
+	constructor() {
+		super("inventoryPanel", vector2(33, 4), vector2(19, 25), LIGHT_GRAY, BLACK, "ui", ["ui"]);
+		this.textRenderer = new TextRenderer(this, "ui", "inventory", WHITE, BLACK);
+	}
+
+	update(level) {
+		this.textRenderer.text = "INVENTORY:\n" + level.getEntityById("player").inventory.getMarked();
 	}
 
 	render(level) {
 		this.renderer.render(level);
+		this.textRenderer.render(level);
 	}
 }
 
@@ -137,6 +141,25 @@ class Seperator extends Entity {
 
 	render(level) {
 		this.renderer.render(level);
+	}
+}
+
+class UIManager extends Entity {
+	constructor() {
+		super("uiManager", vZero(), ["uiManager"]);
+		this.inventory = undefined;
+	}
+
+	update(level) {
+		if(this.inventory == undefined) {
+			if(keyJustDown("i"))
+				this.inventory = level.addEntity(new InventoryPanel());
+		} else {
+			if(keyJustDown("Escape")) {
+				this.inventory.destroy();
+				this.inventory = undefined;
+			}
+		}
 	}
 }
 
