@@ -70,6 +70,18 @@ class Level {
 		return entities;
 	}
 
+	// Returns all Entities in the rect
+	getEntitiesInRect(rect) {
+		var entities = [];
+
+		for(var y = rect.top(); y < rect.bottom(); y++)
+			for(var x = rect.left(); x < rect.right(); x++)
+				for(const entity of this.getEntitiesAtPosition(vector2(x, y)))
+					entities.push(entity);
+
+		return entities;
+	}
+
 	// Initialize all entities
 	init() {
 		this.tilemap.init(this);

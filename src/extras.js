@@ -392,7 +392,7 @@ class DungeonGenerator extends WorldGenerator {
 // extras/entities.js
 class Door extends Entity {
 	constructor(position = vZero()) {
-		super("door", position, ["solid", "door"]);
+		super("door", position, ["solid", "door", "openable"]);
 		this.renderer = new CharRenderer(this, "default", RIGHT_VERTICAL_LINE_3, MID_BROWN, DARK_BROWN);
 	}
 
@@ -506,6 +506,18 @@ class Level {
 			if(entity.position.x == position.x
 			&& entity.position.y == position.y)
 				entities.push(entity);
+		return entities;
+	}
+
+	// Returns all Entities in the rect
+	getEntitiesInRect(rect) {
+		var entities = [];
+
+		for(var y = rect.top(); y < rect.bottom(); y++)
+			for(var x = rect.left(); x < rect.right(); x++)
+				for(const entity of this.getEntitiesAtPosition(vector2(x, y)))
+					entities.push(entity);
+
 		return entities;
 	}
 

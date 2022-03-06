@@ -32,20 +32,18 @@ class PickupAction extends Action {
 }
 
 class OpenAction extends Action {
-	constructor(entity, level, position) {
+	constructor(entity, level) {
 		super(entity);
 		this.level = level;
-		this.position = position;
 	}
 
 	perform() {
-		for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
+		for(var entity of level.getEntitiesInRect(new Rect(this.entity.position.minus(1), vector2(3, 3)))) {
 			if(entity.hasTag("openable")) {
-				if(entity.hasTag("chest")) {
-					this.level.getEntityById("log").renderer.text = "OPENED CHEST";
+				this.level.getEntityById("log").renderer.text = `OPENED ${entity.id}`;
+				if(entity.hasTag("chest"))
 					this.level.addEntity(entity.item);
-					entity.destroy();
-				}
+				entity.destroy();
 			}
 		}
 	}
