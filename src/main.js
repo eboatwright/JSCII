@@ -232,15 +232,14 @@ init = function() {
 		init2DArray(WIDTH_TILE, HEIGHT_TILE)
 	);
 
-	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2));
-
-	const playerPosition = dungeonGenerator.generate();
-
 	level = new Level(
 		["item", "default", "lighting", "ui"],
 		tilemap,
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
+
+	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2), true, level);
+	const playerPosition = dungeonGenerator.generate();
 
 	var sapphireStaff = new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK));
 	level.addEntity(new Chest(playerPosition.minus(2), sapphireStaff));

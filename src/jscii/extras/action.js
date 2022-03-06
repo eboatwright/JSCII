@@ -22,10 +22,11 @@ class NoAction extends Action {
 // This is a very basic class for moving / collision
 class MoveAction extends Action {
 	// The Entity to move, the level and the direction to move
-	constructor(entity, level, direction = vZero()) {
+	constructor(entity, level, direction = vZero(), damage = 1) {
 		super(entity);
 		this.level = level;
 		this.direction = direction;
+		this.damage = 1;
 	}
 
 	perform() {
@@ -35,7 +36,7 @@ class MoveAction extends Action {
 			if(entity.hasTag("solid")) {
 				// If the Entity has health, then damage it
 				if(entity.health !== undefined)
-					entity.health.damage(1);
+					entity.health.damage(this.damage);
 				// Then return because we can't go inside of a solid Entity
 				return;
 			}

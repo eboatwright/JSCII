@@ -14,7 +14,7 @@ class WorldGenerator {
 // This one's pretty complex. If you want a good tutorial on how to do something like this, go here:
 // https://rogueliketutorials.com/tutorials/tcod/v2/part-3/
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 100, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero()) {
+	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 100, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero(), doors = true, level = undefined) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
 		this.tilemap = tilemap;
 		this.minRoomSize = minRoomSize;
@@ -25,6 +25,8 @@ class DungeonGenerator extends WorldGenerator {
 		this.tunnelTile = tunnelTile;
 		this.posOffset = posOffset;
 		this.sizeOffset = sizeOffset;
+		this.doors = doors;
+		this.level = level;
 		this.tries = 0;
 		this.rooms = [];
 	}
@@ -75,16 +77,28 @@ class DungeonGenerator extends WorldGenerator {
 
 	// Generate a horizontal tunnel from a to b
 	createHorizontalTunnel(x1, x2, y) {
-		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
+		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+			if(this.tilemap.tiles[y][x] == this.wallTile
+			&& this.doors
+			&& Math.floor(randomRange(0, 3)) == 0)
+				level.addEntity(new Door(vector2(x, y)));
+			
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
+		}
 	}
 
 	// Generate a vertical tunnel from a to b
 	createVerticalTunnel(y1, y2, x) {
-		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
+		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+			if(this.tilemap.tiles[y][x] == this.wallTile
+			&& this.doors
+			&& Math.floor(randomRange(0, 3)) == 0)
+				level.addEntity(new Door(vector2(x, y)));
+
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
+		}
 	}
 
 	// Connect all the rooms with tunnels

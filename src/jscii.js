@@ -269,7 +269,7 @@ function randomInArray(array) {
 
 // A function for making random choices easier (returns true or false)
 function flipCoin() {
-	return randomRange(0, 2) == 0;
+	return Math.floor(randomRange(0, 2)) == 0;
 }
 
 // Easier array initialization

@@ -86,10 +86,11 @@ class NoAction extends Action {
 // This is a very basic class for moving / collision
 class MoveAction extends Action {
 	// The Entity to move, the level and the direction to move
-	constructor(entity, level, direction = vZero()) {
+	constructor(entity, level, direction = vZero(), damage = 1) {
 		super(entity);
 		this.level = level;
 		this.direction = direction;
+		this.damage = 1;
 	}
 
 	perform() {
@@ -99,7 +100,7 @@ class MoveAction extends Action {
 			if(entity.hasTag("solid")) {
 				// If the Entity has health, then damage it
 				if(entity.health !== undefined)
-					entity.health.damage(1);
+					entity.health.damage(this.damage);
 				// Then return because we can't go inside of a solid Entity
 				return;
 			}
@@ -115,7 +116,7 @@ class MoveAction extends Action {
 	}
 }
 
-// extras/renderers.js
+// extras/components.js
 // A "middle man" class for making renderers
 class Renderer extends Component {
 	// The layer is used by Level for rendering order
@@ -262,7 +263,7 @@ class WorldGenerator {
 // This one's pretty complex. If you want a good tutorial on how to do something like this, go here:
 // https://rogueliketutorials.com/tutorials/tcod/v2/part-3/
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 100, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero()) {
+	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 100, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero(), doors = true, level = undefined) {
 		super(tilemap.tiles[0].length, tilemap.tiles.length);
 		this.tilemap = tilemap;
 		this.minRoomSize = minRoomSize;
@@ -273,6 +274,8 @@ class DungeonGenerator extends WorldGenerator {
 		this.tunnelTile = tunnelTile;
 		this.posOffset = posOffset;
 		this.sizeOffset = sizeOffset;
+		this.doors = doors;
+		this.level = level;
 		this.tries = 0;
 		this.rooms = [];
 	}
@@ -323,16 +326,28 @@ class DungeonGenerator extends WorldGenerator {
 
 	// Generate a horizontal tunnel from a to b
 	createHorizontalTunnel(x1, x2, y) {
-		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
+		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+			if(this.tilemap.tiles[y][x] == this.wallTile
+			&& this.doors
+			&& Math.floor(randomRange(0, 3)) == 0)
+				level.addEntity(new Door(vector2(x, y)));
+			
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
+		}
 	}
 
 	// Generate a vertical tunnel from a to b
 	createVerticalTunnel(y1, y2, x) {
-		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
+		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+			if(this.tilemap.tiles[y][x] == this.wallTile
+			&& this.doors
+			&& Math.floor(randomRange(0, 3)) == 0)
+				level.addEntity(new Door(vector2(x, y)));
+
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
+		}
 	}
 
 	// Connect all the rooms with tunnels
@@ -371,6 +386,18 @@ class DungeonGenerator extends WorldGenerator {
 		this.generateTunnels();
 
 		return this.placePlayer();
+	}
+}
+
+// extras/entities.js
+class Door extends Entity {
+	constructor(position = vZero()) {
+		super("door", position, ["solid", "door"]);
+		this.renderer = new CharRenderer(this, "default", RIGHT_VERTICAL_LINE_3, MID_BROWN, DARK_BROWN);
+	}
+
+	render(level) {
+		this.renderer.render(level);
 	}
 }
 
