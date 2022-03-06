@@ -48,17 +48,27 @@ class PlayerController extends Component {
 				}
 			}
 		}
+
+		if(keyJustDown("o")) {
+			for(var entity of level.getEntitiesAtPosition(this.entity.position)) {
+				if(entity.hasTag("chest")) {
+					level.getEntityById("log").renderer.text = "OPENED CHEST";
+					level.addEntity(entity.item);
+					entity.destroy();
+				}
+			}
+		}
 	}
 }
 
 class InventoryPanel extends Panel {
 	constructor() {
-		super("inventoryPanel", vector2(36, 4), vector2(16, 25), LIGHT_GRAY, BLACK, "ui", ["ui"]);
+		super("inventoryPanel", vector2(33, 4), vector2(19, 25), LIGHT_GRAY, BLACK, "ui", ["ui"]);
 		this.textRenderer = new TextRenderer(this, "ui", "inventory", WHITE, BLACK);
 	}
 
 	update(level) {
-		this.textRenderer.text = "INVENTORY:\n" + level.getEntityById("player").inventory.get();
+		this.textRenderer.text = "INVENTORY:\n" + level.getEntityById("player").inventory.getMarked();
 	}
 
 	render(level) {
@@ -107,6 +117,18 @@ class Player extends Entity {
 	}
 }
 
+class Chest extends Entity {
+	constructor(position = vZero(), item) {
+		super("chest", position, ["chest"]);
+		this.renderer = new CharRenderer(this, "default", BOTTOM_HALF, MID_BROWN, BLACK);
+		this.item = item;
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
 class Seperator extends Entity {
 	constructor(position = vZero(), fgColor = WHITE) {
 		super("seperator", position, ["seperator", "hud"]);
@@ -135,8 +157,10 @@ init = function() {
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
 
+	var sapphireStaff = new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK));
+	level.addEntity(new Chest(playerPosition.minus(2), sapphireStaff));
+
 	level.addEntity(new Player(playerPosition));
-	level.addEntity(new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK)));
 
 	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
 	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));

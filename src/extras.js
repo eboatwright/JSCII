@@ -874,6 +874,19 @@ class Inventory extends Component {
 		}
 		return result;
 	}
+
+	// Formats everything into a marked string
+	getMarked() {
+		var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+		var result = "";
+		for(var i = 0; i < this.inventory.length; i++) {
+			result += `${alphabet[i]}: ${this.inventory[i].amount} ${this.inventory[i].item.name}`;
+			if(this.inventory[i].amount > 1)
+				result += "S";
+			result += "\n";
+		}
+		return result;
+	}
 }
 
 // extras/camera.js
