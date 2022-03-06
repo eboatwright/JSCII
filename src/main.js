@@ -63,10 +63,31 @@ class Chest extends Entity {
 	}
 }
 
-var test = vZero();
-
 class PlayerController extends Component {
-	constructor(entity) { super(entity); }
+	constructor(entity) {
+		super(entity);
+
+		this.moveTimer = 0;
+		this.inventoryPanel = undefined;
+		this.dropping = false;
+	}
+
+	openInventory(level) {
+		return level.addEntity(new InventoryPanel());
+	}
+
+	closeInventory(level) {
+		this.inventoryPanel.destroy();
+		this.inventoryPanel = undefined;
+	}
+
+	dropIndex(index, level) {
+		var item = this.entity.inventory.dropIndex(index);
+		if(item === null)
+			return;
+		item.position = this.entity.position.copy();
+		level.addEntity(item);
+	}
 
 	update(level) {
 		var direction = vector2(0, 0);
@@ -94,6 +115,38 @@ class PlayerController extends Component {
 
 		if(keyJustDown("o"))
 			new OpenAction(this.entity, level).perform();
+
+		if(this.inventoryPanel === undefined) {
+			if(keyJustDown("i"))
+				this.inventoryPanel = this.openInventory(level);
+		} else
+			if(keyJustDown("Escape"))
+				this.closeInventory(level);
+
+		if(this.dropping) {
+			if(this.inventoryPanel === undefined)
+				this.inventoryPanel = this.openInventory(level);
+			var key = anyJustDown(ALPHABET);
+			if(key !== null) {
+				var index = -1;
+
+				for(var i = 0; i < ALPHABET.length; i++) {
+					if(ALPHABET[i] == key) {
+						index = i;
+						break;
+					}
+				}
+
+				if(index != -1)
+					this.dropIndex(index, level);
+
+				this.closeInventory(level);
+				this.dropping = false;
+			}
+		}
+
+		if(keyJustDown("d"))
+			this.dropping = true;
 	}
 }
 
@@ -105,7 +158,6 @@ class Player extends Entity {
 		this.health = new HealthStat(this);
 		this.magic = new MagicStat(this);
 		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
-		this.moveTimer = 0;
 	}
 
 	update(level) {
@@ -116,12 +168,6 @@ class Player extends Entity {
 
 	render(level) {
 		this.renderer.render(level);
-	}
-
-	dropIndex(index, level) {
-		var item = this.inventory.dropIndex(index);
-		item.position = this.position.copy();
-		level.addEntity(item);
 	}
 }
 
@@ -174,57 +220,6 @@ class Seperator extends Entity {
 	}
 }
 
-class UIManager extends Entity {
-	constructor() {
-		super("uiManager", vZero(), ["uiManager"]);
-		this.inventory = undefined;
-		this.dropping = false;
-	}
-
-	openInventory(level) {
-		return level.addEntity(new InventoryPanel());
-	}
-
-	closeInventory(level) {
-		this.inventory.destroy();
-		this.inventory = undefined;
-	}
-
-	update(level) {
-		if(this.inventory == undefined)
-			if(keyJustDown("i"))
-				this.inventory = this.openInventory(level);
-		else
-			if(keyJustDown("Escape"))
-				this.closeInventory(level);
-
-		if(this.dropping) {
-			if(this.inventory === undefined)
-				this.inventory = this.openInventory(level);
-			var key = anyJustDown(ALPHABET);
-			if(key !== null) {
-				var index = -1;
-
-				for(var i = 0; i < ALPHABET.length; i++) {
-					if(ALPHABET[i] == key) {
-						index = i;
-						break;
-					}
-				}
-
-				if(index != -1)
-					level.getEntityById("player").dropIndex(index, level);
-
-				this.closeInventory(level);
-				this.dropping = false;
-			}
-		}
-
-		if(keyJustDown("d"))
-			this.dropping = true;
-	}
-}
-
 init = function() {
 	tilemap = new Tilemap(
 		"tilemap",
@@ -253,8 +248,6 @@ init = function() {
 
 	level.addEntity(new Seperator(vector2(0, 30), LIGHT_GRAY));
 	level.addEntity(new Text("log", vector2(1, 32), "WELCOME!", WHITE, BLACK));
-
-	level.addEntity(new UIManager());
 
 	level.init();
 

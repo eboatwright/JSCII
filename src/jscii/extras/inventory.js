@@ -83,6 +83,8 @@ class Inventory extends Component {
 
 	// Drop the item corresponding to the index, and return the Item Entity
 	dropIndex(index) {
+		if(this.inventory.length <= index)
+			return null;
 		return this.drop(this.inventory[index].item.name);
 	}
 
