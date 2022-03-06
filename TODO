@@ -23,13 +23,10 @@ Main todo list:
 	- 
 
 Extras todo list:
-	- particles
-
 	- spells
-	
-	- ai
-		- line of sight
-		- pathfinding
+	- pathfinding
+	- enemy system
 
 Maybe list:
-	- 
+	- particles
+	- line of sight

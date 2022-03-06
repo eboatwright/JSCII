@@ -521,6 +521,11 @@ class Vector2 {
 	floored() {
 		return vector2(Math.floor(this.x), Math.floor(this.y));
 	}
+
+	// Copy the vector
+	copy() {
+		return vector2(this.x, this.y);
+	}
 }
 
 // A helper function for making vectors

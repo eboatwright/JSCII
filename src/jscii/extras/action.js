@@ -29,6 +29,18 @@ class MoveAction extends Action {
 	}
 
 	perform() {
+		// Before we move, we check if there are any other entities at the position
+		for(const entity of this.level.getEntitiesAtPosition(this.entity.position.plus(this.direction))) {
+			// If there is an Entity with the solid tag, we can't move there
+			if(entity.hasTag("solid")) {
+				// If the Entity has health, then damage it
+				if(entity.health !== undefined)
+					entity.health.damage(1);
+				// Then return because we can't go inside of a solid Entity
+				return;
+			}
+		}
+
 		// Move the entity
 		this.entity.position.add(this.direction);
 

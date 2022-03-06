@@ -10,7 +10,6 @@ const TILESET = [
 ];
 var tilemap;
 var dungeonGenerator;
-var testText;
 var level;
 
 class PickupAction extends Action {
@@ -64,6 +63,8 @@ class Chest extends Entity {
 	}
 }
 
+var test = vZero();
+
 class PlayerController extends Component {
 	constructor(entity) { super(entity); }
 
@@ -114,6 +115,28 @@ class Player extends Entity {
 
 	render(level) {
 		this.renderer.render(level);
+	}
+}
+
+class Enemy extends Entity {
+	constructor(id = "enemy", position = vZero(), tags = ["enemy", "solid"]) {
+		super(id, position, tags);
+		this.health = new HealthStat(this, 2, 2);
+		this.health.onZero = this.onZero;
+
+		this.renderer = new CharRenderer(this, "default", S, MID_DARK_GREEN, DARK_GRAY);
+	}
+
+	update(level) {
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+
+	// From the HealthStat's point of view
+	onZero() {
+		this.entity.destroy();
 	}
 }
 
@@ -182,6 +205,8 @@ init = function() {
 
 	var sapphireStaff = new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK));
 	level.addEntity(new Chest(playerPosition.minus(2), sapphireStaff));
+
+	level.addEntity(new Enemy("snake", playerPosition.plus(1)));
 
 	level.addEntity(new Player(playerPosition));
 
