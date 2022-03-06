@@ -165,6 +165,8 @@ const LIGHT_GRAY = "#9f9f9f";
 // The color order on the texture sheet
 const COLORS = [BLACK, WHITE, DARK_BROWN, LIGHT_BLUE, PINK, MID_DARK_GREEN, DARK_BLUE, LIGHT_GREEN, MID_BROWN, DARK_GREEN, LIGHT_BROWN, DARK_GRAY, MID_GRAY, MID_LIGHT_GREEN, MID_BLUE, LIGHT_GRAY];
 
+const ALPHABET = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
 // input.js
 // This stores whether or not the key is being held down right now
 var keys = [];
@@ -204,6 +206,30 @@ function keyJustDown(key) {
 // "Was the key just released this frame?"
 function keyJustUp(key) {
 	return !keys[key] && keysLast[key];
+}
+
+// Checks if any of the keys given (in an array) are down
+function anyDown(keysToCheck) {
+	for(const key of keysToCheck)
+		if(keyDown(key))
+			return key;
+	return null;
+}
+
+// Checks if any of the keys given (in an array) were just pressed
+function anyJustDown(keysToCheck) {
+	for(const key of keysToCheck)
+		if(keyJustDown(key))
+			return key;
+	return null;
+}
+
+// Checks if any of the keys given (in an array) were just released
+function anyJustUp(keysToCheck) {
+	for(const key of keysToCheck)
+		if(keyJustUp(key))
+			return key;
+	return null;
 }
 
 // utils.js

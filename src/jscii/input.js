@@ -37,3 +37,27 @@ function keyJustDown(key) {
 function keyJustUp(key) {
 	return !keys[key] && keysLast[key];
 }
+
+// Checks if any of the keys given (in an array) are down
+function anyDown(keysToCheck) {
+	for(const key of keysToCheck)
+		if(keyDown(key))
+			return key;
+	return null;
+}
+
+// Checks if any of the keys given (in an array) were just pressed
+function anyJustDown(keysToCheck) {
+	for(const key of keysToCheck)
+		if(keyJustDown(key))
+			return key;
+	return null;
+}
+
+// Checks if any of the keys given (in an array) were just released
+function anyJustUp(keysToCheck) {
+	for(const key of keysToCheck)
+		if(keyJustUp(key))
+			return key;
+	return null;
+}

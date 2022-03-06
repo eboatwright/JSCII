@@ -879,6 +879,11 @@ class Inventory extends Component {
 		return item;
 	}
 
+	// Drop the item corresponding to the index, and return the Item Entity
+	dropIndex(index) {
+		return this.drop(this.inventory[index].item.name);
+	}
+
 	// Basically a format() function for the Inventory
 	get() {
 		var result = "";
@@ -893,10 +898,9 @@ class Inventory extends Component {
 
 	// Formats everything into a marked string
 	getMarked() {
-		var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 		var result = "";
 		for(var i = 0; i < this.inventory.length; i++) {
-			result += `${alphabet[i]}: ${this.inventory[i].amount} ${this.inventory[i].item.name}`;
+			result += `${ALPHABET[i]}: ${this.inventory[i].amount} ${this.inventory[i].item.name}`;
 			if(this.inventory[i].amount > 1)
 				result += "S";
 			result += "\n";

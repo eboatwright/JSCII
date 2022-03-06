@@ -82,7 +82,7 @@ class PlayerController extends Component {
 		if(direction.magnitude() > 0) {
 			this.moveTimer -= deltaTime;
 			if(this.moveTimer <= 0) {
-				this.moveTimer = 1;
+				this.moveTimer = 2;
 				new MoveAction(this.entity, level, direction).perform();
 				level.lightmap.update(level);
 			}
@@ -103,6 +103,7 @@ class Player extends Entity {
 		this.controller = new PlayerController(this);
 		this.inventory = new Inventory(this, 23);
 		this.health = new HealthStat(this);
+		this.magic = new MagicStat(this);
 		this.renderer = new CharRenderer(this, "default", AT, LIGHT_BROWN, DARK_GRAY);
 		this.moveTimer = 0;
 	}
@@ -110,11 +111,17 @@ class Player extends Entity {
 	update(level) {
 		this.controller.update(level);
 		var hud = level.getEntityById("hud");
-		hud.renderer.text = `HP: ${this.health.value}`;
+		hud.renderer.text = `HP: ${this.health.value} | MP: ${this.magic.value}`;
 	}
 
 	render(level) {
 		this.renderer.render(level);
+	}
+
+	dropIndex(index, level) {
+		var item = this.inventory.dropIndex(index);
+		item.position = this.position.copy();
+		level.addEntity(item);
 	}
 }
 
@@ -171,18 +178,50 @@ class UIManager extends Entity {
 	constructor() {
 		super("uiManager", vZero(), ["uiManager"]);
 		this.inventory = undefined;
+		this.dropping = false;
+	}
+
+	openInventory(level) {
+		return level.addEntity(new InventoryPanel());
+	}
+
+	closeInventory(level) {
+		this.inventory.destroy();
+		this.inventory = undefined;
 	}
 
 	update(level) {
-		if(this.inventory == undefined) {
+		if(this.inventory == undefined)
 			if(keyJustDown("i"))
-				this.inventory = level.addEntity(new InventoryPanel());
-		} else {
-			if(keyJustDown("Escape")) {
-				this.inventory.destroy();
-				this.inventory = undefined;
+				this.inventory = this.openInventory(level);
+		else
+			if(keyJustDown("Escape"))
+				this.closeInventory(level);
+
+		if(this.dropping) {
+			if(this.inventory === undefined)
+				this.inventory = this.openInventory(level);
+			var key = anyJustDown(ALPHABET);
+			if(key !== null) {
+				var index = -1;
+
+				for(var i = 0; i < ALPHABET.length; i++) {
+					if(ALPHABET[i] == key) {
+						index = i;
+						break;
+					}
+				}
+
+				if(index != -1)
+					level.getEntityById("player").dropIndex(index, level);
+
+				this.closeInventory(level);
+				this.dropping = false;
 			}
 		}
+
+		if(keyJustDown("d"))
+			this.dropping = true;
 	}
 }
 
