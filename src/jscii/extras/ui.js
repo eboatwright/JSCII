@@ -15,7 +15,7 @@ class PanelRenderer extends Renderer {
 				if(x == 0) {
 					char = LEFT_VERTICAL_LINE_3;
 					if(y == 0)
-						char = FWD_SLASH;
+						char = FORWARD_DIAGONAL_LINE;
 					if(y == this.size.y - 1)
 						char = BACK_DIAGONAL_LINE;
 				} else if(x == this.size.x - 1) {
@@ -23,7 +23,7 @@ class PanelRenderer extends Renderer {
 					if(y == 0)
 						char = BACK_DIAGONAL_LINE;
 					if(y == this.size.y - 1)
-						char = FWD_SLASH;
+						char = FORWARD_DIAGONAL_LINE;
 				} else {
 					if(y == 0)
 						char = TOP_HORIZONTAL_LINE_3;

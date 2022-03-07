@@ -341,6 +341,7 @@ function toCharIndex(char) {
 		case "-": return HYPHON;
 		case ".": return PERIOD;
 		case "/": return FWD_SLASH;
+		case "\\": return BACK_DIAGONAL_LINE;
 		case "0": return ZERO;
 		case "1": return ONE;
 		case "2": return TWO;
@@ -399,7 +400,7 @@ class Font {
 		}
 	}
 
-	// This is for rendering alot of characters, that *can't* be conveyed with regular text.
+	// This is for rendering alot of characters, that can't* be conveyed with regular text.
 	// (Although you can put the indexes of "regular" letters through it)
 	renderArray(array, x, y, fgColor, bgColor) {
 		for(var i = 0; i < array.length; i++)

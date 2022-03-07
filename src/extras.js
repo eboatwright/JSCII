@@ -188,7 +188,7 @@ class PanelRenderer extends Renderer {
 				if(x == 0) {
 					char = LEFT_VERTICAL_LINE_3;
 					if(y == 0)
-						char = FWD_SLASH;
+						char = FORWARD_DIAGONAL_LINE;
 					if(y == this.size.y - 1)
 						char = BACK_DIAGONAL_LINE;
 				} else if(x == this.size.x - 1) {
@@ -196,7 +196,7 @@ class PanelRenderer extends Renderer {
 					if(y == 0)
 						char = BACK_DIAGONAL_LINE;
 					if(y == this.size.y - 1)
-						char = FWD_SLASH;
+						char = FORWARD_DIAGONAL_LINE;
 				} else {
 					if(y == 0)
 						char = TOP_HORIZONTAL_LINE_3;
@@ -324,13 +324,27 @@ class DungeonGenerator extends WorldGenerator {
 		}
 	}
 
+	// For adding a door
+	addDoor(x, y) {
+		// This just checks it's 8 neighbors, and counts how many tunnel tiles are in beside it.
+		var tunnels = 0;
+		for(var yOff = -1; yOff < 1; yOff++)
+			for(var xOff = -1; xOff < 1; xOff++)
+				if(this.level.tilemap.tiles[y + yOff][x + xOff] == this.tunnelTile)
+					tunnels += 1;
+
+		// If there's more than 2 tunnels, that means we're in at least a 2 wide doorway, and we don't want to put a door there
+		if(tunnels <= 2)
+			this.level.addEntity(new Door(vector2(x, y)));
+	}
+
 	// Generate a horizontal tunnel from a to b
 	createHorizontalTunnel(x1, x2, y) {
 		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
 			if(this.tilemap.tiles[y][x] == this.wallTile
 			&& this.doors
 			&& Math.floor(randomRange(0, 3)) == 0)
-				level.addEntity(new Door(vector2(x, y)));
+				this.addDoor(x, y);
 			
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
@@ -343,7 +357,7 @@ class DungeonGenerator extends WorldGenerator {
 			if(this.tilemap.tiles[y][x] == this.wallTile
 			&& this.doors
 			&& Math.floor(randomRange(0, 3)) == 0)
-				level.addEntity(new Door(vector2(x, y)));
+				this.addDoor(x, y);
 
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
@@ -390,10 +404,24 @@ class DungeonGenerator extends WorldGenerator {
 }
 
 // extras/entities.js
+// A simple Entity that the world generator can use for doors!
+// It has the right tags, so that if you use MoveAction, then you can open it and you can't run through it
 class Door extends Entity {
 	constructor(position = vZero()) {
 		super("door", position, ["solid", "door", "openable"]);
 		this.renderer = new CharRenderer(this, "default", RIGHT_VERTICAL_LINE_3, MID_BROWN, DARK_BROWN);
+	}
+
+	render(level) {
+		this.renderer.render(level);
+	}
+}
+
+// A class for rendering a 2d array
+class TwoDArray extends Entity {
+	constructor(id = "2dArray", position = vZero(), array = [], fgColor = WHITE, bgColor = BLACK, layer = "ui", tags = ["2dArray"]) {
+		super(id, position, tags);
+		this.renderer = new TwoDArrayRenderer(this, layer, array, fgColor, bgColor);
 	}
 
 	render(level) {

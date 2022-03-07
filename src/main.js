@@ -1,6 +1,16 @@
 const WIDTH_TILE = 53;
 const HEIGHT_TILE = 33;
 
+const TITLE_STATE = 0;
+const GAME_STATE = 1;
+var state = TITLE_STATE;
+
+const TITLE = [
+	[FORWARD_DIAGONAL_LINE, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, BACK_DIAGONAL_LINE],
+	[LEFT_VERTICAL_LINE_3, "T", "H", "E", " ", "R", "E", "L", "I", "C", " ", "O", "F", " ", "O", "P", "H", "I", "U", "C", "H", "U", "S", RIGHT_VERTICAL_LINE_3],
+	[BACK_DIAGONAL_LINE, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, BOTTOM_HORIZONTAL_LINE_3, FORWARD_DIAGONAL_LINE],
+];
+
 const TILESET = [
 	new Tile(SPACE, BLACK, BLACK, ["blank", "solid"]),
 	new Tile(PERIOD, MID_GRAY, BLACK, ["floor", "roomLighted"]),
@@ -10,7 +20,9 @@ const TILESET = [
 ];
 var tilemap;
 var dungeonGenerator;
-var level;
+
+var titleState;
+var gameState;
 
 class PickupAction extends Action {
 	constructor(entity, level) {
@@ -38,7 +50,7 @@ class OpenAction extends Action {
 	}
 
 	perform() {
-		for(var entity of level.getEntitiesInRect(new Rect(this.entity.position.minus(1), vector2(3, 3)))) {
+		for(var entity of this.level.getEntitiesInRect(new Rect(this.entity.position.minus(1), vector2(3, 3)))) {
 			if(entity.hasTag("openable")) {
 				this.level.getEntityById("log").renderer.text = `OPENED ${entity.id}`;
 				if(entity.hasTag("chest"))
@@ -104,6 +116,9 @@ class PlayerController extends Component {
 				this.moveTimer = 2;
 				new MoveAction(this.entity, level, direction).perform();
 				level.lightmap.update(level);
+
+				for(const enemy of level.getEntitiesWithTag("enemy"))
+					enemy.move(level);
 			}
 		} else
 			this.moveTimer = 0;
@@ -150,7 +165,7 @@ class PlayerController extends Component {
 
 class Player extends Entity {
 	constructor(position = vZero()) {
-		super("player", position, ["player"]);
+		super("player", position, ["player", "solid"]);
 		this.controller = new PlayerController(this);
 		this.inventory = new Inventory(this, 23);
 		this.health = new HealthStat(this);
@@ -178,11 +193,12 @@ class Enemy extends Entity {
 		this.renderer = new CharRenderer(this, "default", S, MID_DARK_GREEN, DARK_GRAY);
 	}
 
-	update(level) {
-	}
-
 	render(level) {
 		this.renderer.render(level);
+	}
+
+	move(level) {
+		new MoveAction(this, level, vector2(-1, 0)).perform();
 	}
 
 	// From the HealthStat's point of view
@@ -218,44 +234,80 @@ class Seperator extends Entity {
 	}
 }
 
-init = function() {
+class TitleManager extends Entity {
+	constructor() {
+		super("titleManager", vZero(), ["titleManager"]);
+	}
+
+	update(level) {
+		if(keyJustDown("Enter")) {
+			state = GAME_STATE;
+			init();
+		}
+	}
+}
+
+function initTitleState() {
+	titleState = new Level();
+
+	titleState.addEntity(new TwoDArray("title", vector2(15, 5), TITLE, WHITE, BLACK, "ui"));
+	titleState.addEntity(new Text("start", vector2(22, 9), "> start <", WHITE, BLACK, "ui"));
+	titleState.addEntity(new TitleManager());
+
+	titleState.init();
+}
+
+function initGameState() {
 	tilemap = new Tilemap(
 		"tilemap",
 		TILESET,
 		init2DArray(WIDTH_TILE, HEIGHT_TILE)
 	);
 
-	level = new Level(
+	gameState = new Level(
 		["item", "default", "lighting", "ui"],
 		tilemap,
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
 
-	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2), true, level);
+	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2), true, gameState);
 	const playerPosition = dungeonGenerator.generate();
 
 	var sapphireStaff = new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK));
-	level.addEntity(new Chest(playerPosition.minus(2), sapphireStaff));
+	gameState.addEntity(new Chest(playerPosition.minus(2), sapphireStaff));
 
-	level.addEntity(new Enemy("snake", playerPosition.plus(1)));
+	gameState.addEntity(new Enemy("snake", playerPosition.plus(1)));
 
-	level.addEntity(new Player(playerPosition));
+	gameState.addEntity(new Player(playerPosition));
 
-	level.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
-	level.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
+	gameState.addEntity(new Text("hud", vector2(1, 1), "HP: X", WHITE, BLACK));
+	gameState.addEntity(new Seperator(vector2(0, 2), LIGHT_GRAY));
 
-	level.addEntity(new Seperator(vector2(0, 30), LIGHT_GRAY));
-	level.addEntity(new Text("log", vector2(1, 32), "WELCOME!", WHITE, BLACK));
+	gameState.addEntity(new Seperator(vector2(0, 30), LIGHT_GRAY));
+	gameState.addEntity(new Text("log", vector2(1, 32), "WELCOME!", WHITE, BLACK));
 
-	level.init();
+	gameState.init();
+}
+
+init = function() {
+	if(state == TITLE_STATE)
+		initTitleState();
+	else if(state == GAME_STATE)
+		initGameState();
 
 	return true;
 }
 
 update = function() {
-	level.update();
+	if(state == TITLE_STATE)
+		titleState.update();
+	else if(state == GAME_STATE)
+		gameState.update();
 }
 
 render = function() {
-	level.render();
+	if(state == TITLE_STATE)
+		titleState.render();
+	else if(state == GAME_STATE)
+		gameState.render();
 }

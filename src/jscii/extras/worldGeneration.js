@@ -75,13 +75,27 @@ class DungeonGenerator extends WorldGenerator {
 		}
 	}
 
+	// For adding a door
+	addDoor(x, y) {
+		// This just checks it's 8 neighbors, and counts how many tunnel tiles are in beside it.
+		var tunnels = 0;
+		for(var yOff = -1; yOff < 1; yOff++)
+			for(var xOff = -1; xOff < 1; xOff++)
+				if(this.level.tilemap.tiles[y + yOff][x + xOff] == this.tunnelTile)
+					tunnels += 1;
+
+		// If there's more than 2 tunnels, that means we're in at least a 2 wide doorway, and we don't want to put a door there
+		if(tunnels <= 2)
+			this.level.addEntity(new Door(vector2(x, y)));
+	}
+
 	// Generate a horizontal tunnel from a to b
 	createHorizontalTunnel(x1, x2, y) {
 		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
 			if(this.tilemap.tiles[y][x] == this.wallTile
 			&& this.doors
 			&& Math.floor(randomRange(0, 3)) == 0)
-				level.addEntity(new Door(vector2(x, y)));
+				this.addDoor(x, y);
 			
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
@@ -94,7 +108,7 @@ class DungeonGenerator extends WorldGenerator {
 			if(this.tilemap.tiles[y][x] == this.wallTile
 			&& this.doors
 			&& Math.floor(randomRange(0, 3)) == 0)
-				level.addEntity(new Door(vector2(x, y)));
+				this.addDoor(x, y);
 
 			if(!this.tilemap.getTile(x, y).hasTag("floor"))
 				this.tilemap.tiles[y][x] = this.tunnelTile;
