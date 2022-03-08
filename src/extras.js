@@ -263,9 +263,9 @@ class WorldGenerator {
 // This one's pretty complex. If you want a good tutorial on how to do something like this, go here:
 // https://rogueliketutorials.com/tutorials/tcod/v2/part-3/
 class DungeonGenerator extends WorldGenerator {
-	constructor(tilemap, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 100, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero(), doors = true, level = undefined) {
-		super(tilemap.tiles[0].length, tilemap.tiles.length);
-		this.tilemap = tilemap;
+	constructor(level, minRoomSize = vector2(8, 8), maxRoomSize = vector2(16, 16), maxTries = 100, floorTiles = [1, 2], wallTile = 3, tunnelTile = 4, posOffset = vOne(), sizeOffset = vZero(), doors = true) {
+		super(level.tilemap.tiles[0].length, level.tilemap.tiles.length);
+		this.level = level;
 		this.minRoomSize = minRoomSize;
 		this.maxRoomSize = maxRoomSize;
 		this.maxTries = maxTries;
@@ -275,7 +275,6 @@ class DungeonGenerator extends WorldGenerator {
 		this.posOffset = posOffset;
 		this.sizeOffset = sizeOffset;
 		this.doors = doors;
-		this.level = level;
 		this.tries = 0;
 		this.rooms = [];
 	}
@@ -308,7 +307,7 @@ class DungeonGenerator extends WorldGenerator {
 				|| y == rect.size.y - 1)
 					tile = this.wallTile;
 
-				this.tilemap.tiles[y + rect.position.y][x + rect.position.x] = tile;
+				this.level.tilemap.tiles[y + rect.position.y][x + rect.position.x] = tile;
 			}
 		}
 
@@ -341,26 +340,26 @@ class DungeonGenerator extends WorldGenerator {
 	// Generate a horizontal tunnel from a to b
 	createHorizontalTunnel(x1, x2, y) {
 		for(var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-			if(this.tilemap.tiles[y][x] == this.wallTile
+			if(this.level.tilemap.tiles[y][x] == this.wallTile
 			&& this.doors
 			&& Math.floor(randomRange(0, 3)) == 0)
 				this.addDoor(x, y);
 			
-			if(!this.tilemap.getTile(x, y).hasTag("floor"))
-				this.tilemap.tiles[y][x] = this.tunnelTile;
+			if(!this.level.tilemap.getTile(x, y).hasTag("floor"))
+				this.level.tilemap.tiles[y][x] = this.tunnelTile;
 		}
 	}
 
 	// Generate a vertical tunnel from a to b
 	createVerticalTunnel(y1, y2, x) {
 		for(var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-			if(this.tilemap.tiles[y][x] == this.wallTile
+			if(this.level.tilemap.tiles[y][x] == this.wallTile
 			&& this.doors
 			&& Math.floor(randomRange(0, 3)) == 0)
 				this.addDoor(x, y);
 
-			if(!this.tilemap.getTile(x, y).hasTag("floor"))
-				this.tilemap.tiles[y][x] = this.tunnelTile;
+			if(!this.level.tilemap.getTile(x, y).hasTag("floor"))
+				this.level.tilemap.tiles[y][x] = this.tunnelTile;
 		}
 	}
 
@@ -977,6 +976,10 @@ class Inventory extends Component {
 		return result;
 	}
 }
+
+// extras/pathfinding.js
+// Under construction! Don't use!
+// TODO: document me!
 
 // extras/camera.js
 // Preferably, don't instance this just use the CAMERA global

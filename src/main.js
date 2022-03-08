@@ -3,7 +3,7 @@ const HEIGHT_TILE = 33;
 
 const TITLE_STATE = 0;
 const GAME_STATE = 1;
-var state = TITLE_STATE;
+var state = GAME_STATE;
 
 const TITLE = [
 	[FORWARD_DIAGONAL_LINE, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, TOP_HORIZONTAL_LINE_3, BACK_DIAGONAL_LINE],
@@ -185,12 +185,15 @@ class Player extends Entity {
 }
 
 class Enemy extends Entity {
-	constructor(id = "enemy", position = vZero(), tags = ["enemy", "solid"]) {
-		super(id, position, tags);
+	constructor(position = vZero()) {
+		super("enemy", position, ["enemy", "solid"]);
 		this.health = new HealthStat(this, 2, 2);
 		this.health.onZero = this.onZero;
 
 		this.renderer = new CharRenderer(this, "default", S, MID_DARK_GREEN, DARK_GRAY);
+	}
+
+	init(level) {
 	}
 
 	render(level) {
@@ -270,13 +273,13 @@ function initGameState() {
 		new Lightmap("lightmap", init2DArray(WIDTH_TILE, HEIGHT_TILE, 1))
 	);
 
-	dungeonGenerator = new DungeonGenerator(tilemap, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2), true, gameState);
+	dungeonGenerator = new DungeonGenerator(gameState, vector2(6, 6), vector2(15, 15), 210, [1, 2], 3, 4, vector2(1, 4), vector2(0, 2), true);
 	const playerPosition = dungeonGenerator.generate();
 
 	var sapphireStaff = new Item("item", playerPosition.minus(2), "SAPPHIRE STAFF", new CharRenderer(null, "item", FWD_SLASH, MID_BLUE, BLACK));
 	gameState.addEntity(new Chest(playerPosition.minus(2), sapphireStaff));
 
-	gameState.addEntity(new Enemy("snake", playerPosition.plus(1)));
+	gameState.addEntity(new Enemy(playerPosition.plus(1)));
 
 	gameState.addEntity(new Player(playerPosition));
 

@@ -40,8 +40,12 @@ function flipCoin() {
 // Easier array initialization
 function initArray(size, value = 0) {
 	var result = [];
-	for(var i = 0; i < size; i++)
-		result.push(value);
+	for(var i = 0; i < size; i++) {
+		if(typeof value.copy === "function")
+			result.push(value.copy());
+		else
+			result.push(value);
+	}
 	return result;
 }
 

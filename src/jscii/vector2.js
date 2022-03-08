@@ -139,6 +139,12 @@ class Vector2 {
 	copy() {
 		return vector2(this.x, this.y);
 	}
+
+	// Sometimes you need this, for == (idk js is weird)
+	equals(other) {
+		return this.x == other.x
+			&& this.y == other.y;
+	}
 }
 
 // A helper function for making vectors
