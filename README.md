@@ -1,5 +1,5 @@
 # Announcement!
- I'm putting this project on hold, because I remembered how much I *hate* JavaScript. (Please don't take offense, it's just my preference.) Thanks for all the support, and you guys can fix, or add stuff if you want and I'll accept pull requests. Thank you!
+ I'm putting this project on hold, because I remembered how much I don't like working with JavaScript. (Please don't take offense, it's just my preference.) Thanks for all the support, and you guys can fix, or add stuff if you want and I'll accept pull requests. Thank you!
 
 # JSCII
  An ASCII (technically PETSCII :)) "Game Engine" / toolkit for JavaScript!<br>
